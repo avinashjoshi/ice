@@ -1,0 +1,46 @@
+##########################################################
+###                                                    ###
+###   iiii         CCCCCCCCCCCCCEEEEEEEEEEEEEEEEEEEEEE ###
+###  i::::i     CCC::::::::::::CE::::::::::::::::::::E ###
+###   iiii    CC:::::::::::::::CE::::::::::::::::::::E ###
+###          C:::::CCCCCCCC::::CEE::::::EEEEEEEEE::::E ###
+### iiiiiii C:::::C       CCCCCC  E:::::E       EEEEEE ###
+### i:::::iC:::::C                E:::::E              ###
+###  i::::iC:::::C                E::::::EEEEEEEEEE    ###
+###  i::::iC:::::C                E:::::::::::::::E    ###
+###  i::::iC:::::C                E:::::::::::::::E    ###
+###  i::::iC:::::C                E::::::EEEEEEEEEE    ###
+###  i::::iC:::::C                E:::::E              ###
+###  i::::i C:::::C       CCCCCC  E:::::E       EEEEEE ###
+### i::::::i C:::::CCCCCCCC::::CEE::::::EEEEEEEE:::::E ###
+### i::::::i  CC:::::::::::::::CE::::::::::::::::::::E ###
+### i::::::i    CCC::::::::::::CE::::::::::::::::::::E ###
+### iiiiiiii       CCCCCCCCCCCCCEEEEEEEEEEEEEEEEEEEEEE ###
+###                                                    ### 
+##########################################################
+
+Interactive Course Evaluation (iCE) makes life of a course instructor easier
+by providing a web interface to provide feedback regarding their course.
+This is done as a part of project for CS 6360: Database Design (Fall 2011)
+
+###########
+# License #
+###########
+
+This is not a free software license. The license prohibits distribution in any form unless given authority to do so. Author or creator of this software is has full right on the source code.
+
+The license is this way sine this software is created as a part of Database Design course at UT Dallas under Prof.  Balaji Raghavachari.
+
+Eventually iCE may become a free software.
+
+##############
+# Installing #
+##############
+
+
+###########
+# Contact #
+###########
+# Creator: Avinash Joshi
+# Email: avinash.joshi@utdallas.edu
+# Mercurial: https://bitbucket.org/avinashjoshi/ice

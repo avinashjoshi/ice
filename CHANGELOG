@@ -1,0 +1,33 @@
+##########################################################
+###                                                    ###
+###   iiii         CCCCCCCCCCCCCEEEEEEEEEEEEEEEEEEEEEE ###
+###  i::::i     CCC::::::::::::CE::::::::::::::::::::E ###
+###   iiii    CC:::::::::::::::CE::::::::::::::::::::E ###
+###          C:::::CCCCCCCC::::CEE::::::EEEEEEEEE::::E ###
+### iiiiiii C:::::C       CCCCCC  E:::::E       EEEEEE ###
+### i:::::iC:::::C                E:::::E              ###
+###  i::::iC:::::C                E::::::EEEEEEEEEE    ###
+###  i::::iC:::::C                E:::::::::::::::E    ###
+###  i::::iC:::::C                E:::::::::::::::E    ###
+###  i::::iC:::::C                E::::::EEEEEEEEEE    ###
+###  i::::iC:::::C                E:::::E              ###
+###  i::::i C:::::C       CCCCCC  E:::::E       EEEEEE ###
+### i::::::i C:::::CCCCCCCC::::CEE::::::EEEEEEEE:::::E ###
+### i::::::i  CC:::::::::::::::CE::::::::::::::::::::E ###
+### i::::::i    CCC::::::::::::CE::::::::::::::::::::E ###
+### iiiiiiii       CCCCCCCCCCCCCEEEEEEEEEEEEEEEEEEEEEE ###
+###                                                    ### 
+##########################################################
+
+###################
+# Change Log v0.1 #
+###################
+o Added files CHANGELOG
+o Added README
+
+###########
+# Contact #
+###########
+# Creator: Avinash Joshi
+# Email: avinash.joshi@utdallas.edu
+# Mercurial: https://bitbucket.org/avinashjoshi/ice
