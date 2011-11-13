@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * Interactive Course Evaluation (iCE) makes life of a course instructor easier
+ * by providing a web interface to provide feedback regarding their course.
+ * This is done as a part of project for CS 6360: Database Design (Fall 2011)
+ *
+ * License for this project is defined in README
+ *
+ * Creator: Avinash Joshi <axj107420@utdallas.edu>
+ *
+ */
+
 function &pageNewGrab() {
 	$returnArray = array(
 		'title' => getSoftwareName().' v'.getVersion().'',
@@ -136,11 +147,15 @@ function noLoginHtmlEcho( $pPage, $right ) {
 	$homepage = WEB_PAGE_TO_ROOT . 'index.php';
 
 	$pmenuBlocks = array();
-	$pmenuBlocks[] = array( 'id' => 'home', 'name' => 'Home', 'url' => 'home.php' );
-	$pmenuBlocks[] = array( 'id' => 'login', 'name' => 'Login', 'url' => 'login.php' );
-	$pmenuBlocks[] = array( 'id' => 'about', 'name' => 'About', 'url' => 'about.php' );
-	if ($pPage['page_id'] == "setup")
-	$pmenuBlocks[] = array( 'id' => 'setup', 'name' => 'Setup', 'url' => 'setup.php' );
+	if ($pPage['page_id'] == "install") {
+		$pmenuBlocks[] = array( 'id' => 'home', 'name' => 'Home', 'url' => 'index.php' );
+		$pmenuBlocks[] = array( 'id' => 'install', 'name' => 'Install', 'url' => 'install/index.php' );
+		$pmenuBlocks[] = array( 'id' => 'about', 'name' => 'About', 'url' => 'about.php' );
+	} else {
+		$pmenuBlocks[] = array( 'id' => 'home', 'name' => 'Home', 'url' => 'index.php' );
+		$pmenuBlocks[] = array( 'id' => 'login', 'name' => 'Login', 'url' => 'login.php' );
+		$pmenuBlocks[] = array( 'id' => 'about', 'name' => 'About', 'url' => 'about.php' );
+	}
 	$primaryMenuHtml = '';
 	$pmenuBlockHtml = '';
 	foreach( $pmenuBlocks as $pmenuItem ) {
@@ -163,14 +178,14 @@ function noLoginHtmlEcho( $pPage, $right ) {
 	Header( "Expires: Tue, 23 Jun 2009 12:00:00 GMT");		// Date in the past
 
 	echo "
-	<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
-	<html xmlns=\"http://www.w3.org/1999/xhtml\">
-	<head>
-	<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
-	<title>{$pPage['title']}</title>
-	<link rel=\"stylesheet\" type=\"text/css\" href=\"".WEB_PAGE_TO_ROOT."core/theming/css/login.css\" />
-	<link rel=\"stylesheet\" type=\"text/css\" href=\"".WEB_PAGE_TO_ROOT."core/theming/css/main.css\" />
-	<link rel=\"icon\" type=\"\image/ico\" href=\"".WEB_PAGE_TO_ROOT."favicon.ico\" />
+		<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">
+		<html xmlns=\"http://www.w3.org/1999/xhtml\">
+		<head>
+		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
+		<title>{$pPage['title']}</title>
+		<link rel=\"stylesheet\" type=\"text/css\" href=\"".WEB_PAGE_TO_ROOT."core/theming/css/login.css\" />
+		<link rel=\"stylesheet\" type=\"text/css\" href=\"".WEB_PAGE_TO_ROOT."core/theming/css/main.css\" />
+		<link rel=\"icon\" type=\"\image/ico\" href=\"".WEB_PAGE_TO_ROOT."favicon.ico\" />
 	{$pPage['script']}
 	</head>
 	<body {$pPage['onload']} class=\"home\">
@@ -187,16 +202,16 @@ function noLoginHtmlEcho( $pPage, $right ) {
 	<div id=\"wrapper\">
 	<div id=\"container\" class=\"rounded-corners\">";
 	if ($right != "") {
-	echo "
-	<div id=\"main_menu\">
-	<div id=\"main_menu_padded\">
+		echo "
+			<div id=\"main_menu\">
+			<div id=\"main_menu_padded\">
 	{$right}
 	</div>
 	</div>
 	<div id=\"main_body\" class=\"rounded-corners-left\">";
 	} else {
 		echo "
-		<div id=\"main_body\" style=\"width: 100%\" class=\"rounded-corners-left\">";
+			<div id=\"main_body\" style=\"width: 100%\" class=\"rounded-corners-left\">";
 	}
 	echo "
 	{$pPage['body']}

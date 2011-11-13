@@ -44,7 +44,6 @@ if( !@mysql_select_db( $_DBC[ 'db_database' ] ) ) {
 	pageReload();
 }
 
-/*
 $create_tb = "CREATE TABLE users (user_id int(6) AUTO_INCREMENT,first_name varchar(15),last_name varchar(15), user varchar(20), password varchar(32), sec_key varchar(255) NOT NULL, follow text NOT NULL, isadmin int(1) DEFAULT '0' NOT NULL, avatar varchar(70), PRIMARY KEY (user_id)) ENGINE = InnoDB;";
 if( !mysql_query( $create_tb ) ){
 	messagePush( "Table could not be created<br />SQL: ".mysql_error() );
@@ -64,8 +63,9 @@ if( !mysql_query( $insert ) ){
 			        pageReload();
 }
 messagePush( "Data inserted into 'users' table." );
- */
 
 //Setup complete and successful
 messagePush( "Setup successful!" );
+messagePush( "<b>Please delete the \"install\" directory.</b>" );
 pageReload();
+?>

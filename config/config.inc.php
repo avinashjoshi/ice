@@ -11,12 +11,27 @@
  *
  */
 
-# DBM that will be used. MySQL is default
-# Will try to provide support for other databases in the future
-
+/*
+ * DBM that will be used. MySQL is default
+ * I have added this line to fix a few database
+ * functionalities in functions.inc.php
+ */
 $DBMS = 'MySQL';
 
-# Database variables
+/*
+ * The Universitiy logo must be in core/theming/images
+ * You can comment the line containing $univLogoImg
+ * if you do not want a university logo
+ */
+$univLogoImg = 'utd_logo.jpg';
+
+/*
+ * Database variables
+ * db_server = database server
+ * db_database = database name used
+ * db_user = database username
+ * db_password = database password
+ */
 $_DBC = array();
 $_DBC[ 'db_server' ] = 'localhost';
 $_DBC[ 'db_database' ] = 'ice';
