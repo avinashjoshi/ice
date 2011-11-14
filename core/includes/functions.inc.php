@@ -145,7 +145,13 @@ function messagesRegPopAllToHtml() {
 // --END
 
 function getQuote() {
-	$quote = 'Welcome <font color="#99cc33">Guest</font> !';
+	$user = "Guest";
+	$message = "Welcome";
+	if ( isLoggedIn() ) {
+		$user = currentUser();
+		$message = "Howdy,";
+	}
+	$quote = "{$message} <font color=\"#99cc33\">{$user}</font> !";
 	return $quote;
 }
 
@@ -268,5 +274,11 @@ function databaseConnect() {
 	databaseCheck();
 }
 // -- END
+
+function stopSQLi( $string ) {
+	$string = stripslashes( $string );
+	$string = mysql_real_escape_string( $string );
+	return $string;
+}
 
 ?>

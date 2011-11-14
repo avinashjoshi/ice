@@ -16,6 +16,7 @@ function &pageNewGrab() {
 		'title' => getSoftwareName().' v'.getVersion().'',
 		'title_separator' => ' :: ',
 		'body' => '',
+		'below_msg' => '',
 		'page_id' => '',
 		'help_button' => '',
 		'source_button' => '',
@@ -118,8 +119,7 @@ function htmlEcho( $pPage ) {
 	<div id=\"container\" class=\"rounded-corners\">
 	<div id=\"main_menu\">
 	<div id=\"profile_info\">
-	<a href=\"{$profilepage}\"><img class=\"rounded-corners\" width=\"100\" src=\"{$avatarURL}\" /></a>
-	<div>{$user_fullname}</div>
+	<div>User Name</div>
 	<div>{$adminLink}</div>
 	</div>
 	<div id=\"main_menu_padded\">
@@ -132,6 +132,8 @@ function htmlEcho( $pPage ) {
 	<center>
 	{$messagesHtml}
 	</center>
+	<br />
+	{$pPage['below_msg']}
 	</div>
 	<div class=\"clear\">
 	</div>
@@ -218,6 +220,8 @@ function noLoginHtmlEcho( $pPage, $right ) {
 	<center>
 	{$messagesHtml}
 	</center>
+	<br />
+	{$pPage['below_msg']}
 	</div>
 	<div class=\"clear\">
 	</div>

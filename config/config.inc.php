@@ -17,6 +17,7 @@
  * functionalities in functions.inc.php
  */
 $DBMS = 'MySQL';
+$installComplete = false;
 
 /*
  * The Universitiy logo must be in core/theming/images

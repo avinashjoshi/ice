@@ -14,24 +14,12 @@
 define( 'WEB_PAGE_TO_ROOT', '' );
 require_once WEB_PAGE_TO_ROOT.'core/includes/functions.inc.php';
 
-$page = pageNewGrab();
-$page[ 'title' ] .= $page[ 'title_separator' ].'About';
-$page[ 'page_id' ] = 'about';
-$page[ 'body' ] .= "
-	<div class=\"body_padded\">
-	<h2>About iCE</h2>
+if ( !isLoggedIn() ) {
+	redirectPage ( 'login.php' );
+}
 
-	<div class=\"main_body_box\" style=\"width: 95%;\">
-	inblah inblah inblah
-	</div>
-	blah blah blah
-	</div>";
-
-$right = "";
-
-if (!isLoggedIn())
-	noLoginHtmlEcho( $page, $right );
-else
-	htmlEcho( $page );
+logoutUser();
+messagePush ( "You have logged out") ;
+redirectPage ( 'login.php' );
 
 ?>

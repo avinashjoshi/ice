@@ -21,24 +21,28 @@ databaseConnect();
 if( isset( $_POST[ 'Login' ] ) ) {
 
 	$user = $_POST[ 'netid' ];
-	$user = stripslashes( $user );
-	$user = mysql_real_escape_string( $user );
+	$user = stopSQLi( $user );
 
 	$pass = $_POST[ 'password' ];
-	$pass = stripslashes( $pass );
-	$pass = mysql_real_escape_string( $pass );
+	stopSQLi( $pass );
 	$pass = md5( $pass );
+	stopSQLi( $pass );
 
-	$qry = "SELECT * FROM `users` WHERE user='$user' AND password='$pass';";
+	$qry = "SELECT * FROM `users` WHERE LoginId='$user' AND password='$pass';";
 
 	$result = @mysql_query($qry) or die('<pre>' . mysql_error() . '</pre>' );
 
 	if( $result && mysql_num_rows( $result ) == 1 ) {	// Login Successful...
-		messagePush( "You have logged in as '".$user."'" );
-		blobLogin( $user );
 		$row = mysql_fetch_assoc($result);
-		if ( $row["isadmin"] == "1" )
-			blobAdminLogin();
+		// Students are not allowed to login!
+		if ( $row["role"] == "student" ) {
+			messagePush ( "You do not have permission to logon!" );
+			redirectPage ( 'index.php' );
+		}
+		messagePush( "You have logged in as '".$user."'" );
+		loginUser( $user );
+		if ( $row["role"] == "admin" )
+			adminLogin();
 		redirectPage( 'index.php' );
 	}
 

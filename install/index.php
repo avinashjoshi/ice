@@ -48,6 +48,16 @@ $page[ 'body' ] .= "
 	</div>
 	";
 
+if ( $installComplete == true ) {
+	$page ['below_msg' ] = "
+	<div class=\"join\">
+	<form action=\"\" method=\"post\">
+	<input name=\"create_db\" type=\"submit\" value=\"Install Now\">
+	</form>
+	</div>
+		";
+}
+
 $right = "";
 
 if (isLoggedIn())

@@ -61,10 +61,9 @@ $page[ 'body' ] .= "
 			</form>
 		</div>
 		<div class=\"clear\"></div>
-		<pre><b>All blob's (friends + me)</b> | <a href=\"".WEB_PAGE_TO_ROOT."profile/view.php?user=$user\" style=\"text-decoration: none;\">My blob's</a></pre>
 		<br />
 	</div>";
 
 
-blobHtmlEcho( $page );
+htmlEcho( $page );
 ?>

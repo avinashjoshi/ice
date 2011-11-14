@@ -138,7 +138,7 @@ div#container {
 }
 
 div#wrapper {
-	width: 90%;
+	width: 95%;
 	height: 100%;
 	margin-left: auto;
 	margin-right: auto;
@@ -188,7 +188,7 @@ div#system_info {
 
 div#main_body {
 	float:left;
-	width: 75%;
+	width: 80%;
 	background: #fff;
 	padding-top: 20px;
 	padding-bottom: 10px;
@@ -265,7 +265,7 @@ div#primary_menu_padded {
 
 div#main_menu {
 	float: right;
-	width: 25%;
+	width: 20%;
 	height: 100%;
 	/* 	background-color: #f4f4f4; */
 	padding-top: 10px;
