@@ -65,7 +65,7 @@ messagePush( "Table `{$table}` created");
 
 $table = "faculty";
 $db_query = "CREATE TABLE `{$table}` (
-	`Ssn` varchar(20) NOT NULL,
+	`Ssn` varchar(10) NOT NULL,
 	`FName` varchar(30),
 	`MInit` varchar(10),
 	`LName` varchar(30),
@@ -78,10 +78,10 @@ $db_query = "CREATE TABLE `{$table}` (
 	`OfficeLoc` varchar(20),
 	`Position`  varchar(30),
 	`Phone` varchar(10),
-	`Dno` int(6),
+	`DNo` int(6),
 	PRIMARY KEY (`Ssn`),
 	FOREIGN KEY (`LoginId`) REFERENCES `users` (`LoginId`),
-	FOREIGN KEY (`Dno`) REFERENCES `Department` (`Dnumber`)
+	FOREIGN KEY (`DNo`) REFERENCES `Department` (`Dnumber`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 if( !mysql_query( $db_query ) ){
 	messagePush( "Table could not be created<br />SQL: ".mysql_error() );
@@ -107,14 +107,65 @@ messagePush( "Table `{$table}` created");
 
 $table = "course";
 $db_query = "CREATE TABLE `{$table}` (
-	`CourseNo` varchar(10) NOT NULL,
-	`CourseName` varchar(50) NOT NULL,
-	`CourseDesc` varchar(225) NOT NULL,
+	`CNo` varchar(10) NOT NULL,
+	`CName` varchar(50) NOT NULL,
+	`CDesc` varchar(225) NOT NULL,
 	`Credits` int (2),
 	`DeptNo` int (6),
-	PRIMARY KEY (`CourseNo`),
+	PRIMARY KEY (`CNo`),
 	FOREIGN KEY (`DeptNo`) REFERENCES `Department` (`DNumber`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+if( !mysql_query( $db_query ) ){
+	messagePush( "Table could not be created<br />SQL: ".mysql_error() );
+	pageReload();
+}
+messagePush( "Table `{$table}` created");
+
+$table = "section";
+$db_query = "CREATE TABLE `{$table}` (
+	`CRN` int(6) NOT NULL,
+	`CNo` varchar(10) NOT NULL,
+	`SecNo` varchar(10) NOT NULL,
+	`SecName` varchar(10),
+	`SemYear` varchar(20),
+	`SemTime` varchar(20),
+	`InstSsn` varchar(10) NOT NULL REFERENCES `faculty` (`Ssn`),
+		`Comment` varchar(255),
+		PRIMARY KEY (`CRN`),
+		FOREIGN KEY (`CNo`) REFERENCES `course` (`CNo`)
+	) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+if( !mysql_query( $db_query ) ){
+	messagePush( "Table could not be created<br />SQL: ".mysql_error() );
+	pageReload();
+}
+messagePush( "Table `{$table}` created");
+
+$table = "clo";
+$db_query = "CREATE TABLE `{$table}` (
+	`CNo` varchar(10) NOT NULL,
+	`CLO_No` int (3) NOT NULL,
+	`CLO` varchar (200) NOT NULL,
+	PRIMARY KEY (`CNo`,`CLO_No`),
+	FOREIGN KEY (`CNo`) REFERENCES `course` (`CNo`)
+	) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
+if( !mysql_query( $db_query ) ){
+	messagePush( "Table could not be created<br />SQL: ".mysql_error() );
+	pageReload();
+}
+messagePush( "Table `{$table}` created");
+
+$table = "teach";
+$db_query = "CREATE TABLE `{$table}` (
+	`CRN` int(6) NOT NULL REFERENCES `section` (`CRN`),
+	`CLO_No` int (3) NOT NULL REFERENCES `clo` (`CLO_No`),
+	`Exceed` varchar (10) NOT NULL,
+	`Meet` varchar (10) NOT NULL,
+	`Progress` varchar (10) NOT NULL,
+	`Below` varchar (10) NOT NULL,
+	`Metric` char(1) NOT NULL,
+	`Criteria` varchar (255) NOT NULL,
+	PRIMARY KEY (`CRN`,`CLO_No`)
+	) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 if( !mysql_query( $db_query ) ){
 	messagePush( "Table could not be created<br />SQL: ".mysql_error() );
 	pageReload();
@@ -129,7 +180,9 @@ $db_query = "INSERT INTO `{$table}` VALUES
 	( 'root', MD5('toor'), 'admin' ),
 		( 'axj107420', MD5('toor'), 'student' ),
 	( 'chandra', MD5('toor'), 'faculty' ),
+	( 'lkhan', MD5('toor'), 'faculty' ),
 	( 'gupta', MD5('toor'), 'faculty' ),
+	( 'ravip', MD5('toor'), 'faculty' ),
 	( 'rbk', MD5('toor'), 'faculty' );";
 if( !mysql_query( $db_query ) ){
 	messagePush( "Table could not be created<br />SQL: ".mysql_error() );
@@ -152,6 +205,8 @@ $table = "faculty";
 $db_query = "INSERT INTO `{$table}` VALUES
 	( '999887777', 'Gopal', '', 'Gupta', 'gupta', '1958-01-09', 'UTDallas', 'M', '40000', 'gupta@gmail.com', 'ECSS 4.907', 'Department Head', '9728834107', 1 ),
 	( '123456789', 'Balaji', 'K', 'Raghavachari', 'rbk', '1965-01-09', 'UTDallas', 'M', '30000', 'rbk@gmail.com', 'ECSS 4.225', 'Professor', '9728832136', 1 ),
+	( '666884444', 'Ravi', '', 'Prakash', 'ravip', '1965-01-09', 'UTDallas', 'M', '30000', 'ravip@gmail.com', 'ECSS 4.225', 'Professor', '9728832136', 1 ),
+	( '888665555', 'Latifur', '', 'Khan', 'lkhan', '1965-01-09', 'UTDallas', 'M', '30000', 'lkhan@gmail.com', 'ECSS 4.225', 'Associate Professor', '9728834137', 1 ),
 	( '333445555', 'Ramaswamy', '', 'Chandrashekaran', 'chandra', '1955-01-09', 'UTDallas', 'M', '35000', 'chandra@gmail.com', 'ECSS 4.611', 'Professor', '9728832032', 1 )
 	;";
 if( !mysql_query( $db_query ) ){
@@ -162,17 +217,40 @@ messagePush( "Inserted values into table `{$table}`");
 
 $table = "course";
 $db_query = "INSERT INTO `{$table}` VALUES
-	( 'CS1336', 'Programming Fundamentals', 'learning outcomes - Basics of Programming', 3, 1 ),
+	( 'CS6360', 'Database Design', 'SOL Normalization', 3, 1 ),
+	( 'CS6363', 'Design and Analysis of Computer Algorithms', 'Foundation, Basics of Algorithms', 3, 1 ),
 	( 'CS1337', 'Computer Science I (JAVA)', ' Learning outcomes - Java Programming', 3, 1 ),
 	( 'CS2305', 'Discrete Math for Computing I', ' Discrete analysis', 3, 1 ),
 	( 'CS2336', 'Computer Science II - Java', 'Advanced Java Programming', 3, 1 ),
 	( 'CS3305', 'Discrete Math for Computing II', 'Advanced Discrete Analysis', 3, 1 ),
 	( 'CS3341', 'Prob & Stat', 'Plays major role for Network streams advanced stats', 3, 1 ),
-	( 'EE3345', 'Algorithm Anal. & Data Struct', 'Foundation, Basics of Algorithms', 3, 2 ),
-	( 'CE4347', 'Database Systems', 'SOL Normalization', 3, 3 ),
 	( 'CE4348', 'Operating Systems Concepts', 'OD', 3, 3 ),
 	( 'EE6324', 'Information Security', 'Cryptography', 4, 2 )
 	;";
+if( !mysql_query( $db_query ) ){
+	messagePush( "Table could not be created<br />SQL: ".mysql_error() );
+	pageReload();
+}
+messagePush( "Inserted values into table `{$table}`");
+
+$table = "section";
+$db_query = "INSERT INTO `{$table}` VALUES
+	( '84505', 'CS6360', '003', '', '2011', 'Fall', '123456789', '' ),
+	( '84504', 'CS6360', '002', '', '2011', 'Fall', '888665555', '' ),
+	( '85691', 'CS6363', '004', '', '2011', 'Fall', '333445555', '' ),
+	( '21245', 'CS6363', '001', '', '2012', 'Spring', '123456789', '' ),
+	( '12720', 'CE4348', '001', '', '2010', 'Fall', '666884444', '' )
+	;";
+if( !mysql_query( $db_query ) ){
+	messagePush( "Table could not be created<br />SQL: ".mysql_error() );
+	pageReload();
+}
+messagePush( "Inserted values into table `{$table}`");
+
+$table = "clo";
+$db_query = "INSERT INTO `{$table}` VALUES ";
+$db_query .= file_get_contents(WEB_PAGE_TO_ROOT.'core/includes/DBMS/CLO.php', FILE_USE_INCLUDE_PATH);
+$db_query.=";";
 if( !mysql_query( $db_query ) ){
 	messagePush( "Table could not be created<br />SQL: ".mysql_error() );
 	pageReload();

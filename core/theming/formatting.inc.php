@@ -39,7 +39,7 @@ function htmlEcho( $pPage ) {
 
 	if ( isAdmin()) {
 		$menuBlocks['admin'] = array();
-		$menuBlocks['admin'][] = array( 'id' => 'setup', 'name' => 'Setup', 'url' => 'setup.php' );
+		$menuBlocks['admin'][] = array( 'id' => 'setup', 'name' => 'Setup', 'url' => 'admin/setup.php' );
 	}
 
 	$menuHtml = '';

@@ -17,53 +17,18 @@ require_once WEB_PAGE_TO_ROOT.'core/includes/functions.inc.php';
 
 pageStartup( array( 'authenticated' ) );
 
-$page = pageNewGrab();
-$page[ 'title' ] .= $page[ 'title_separator' ].'What\'s on your mind?';
-$page[ 'page_id' ] = 'home';
 databaseConnect();
-/*
-if(isset($_POST['btnUpdate'])) {
+$role = getRole();
 
-	if ( $_POST['statusMsg'] == "" ) {
-		blobMessagePush( "Status cannot be empty!" );
-		blobRedirect( 'index.php' );
-	}
-
-	$message = trim($_POST['statusMsg']);
-
-	// Sanitize message input
-   $message = stripslashes($message);
-   $message = mysql_real_escape_string($message);
-   $message = htmlspecialchars($message);
-
-	// Sanitize name input
-	$name = stripslashes( $name );
-	$name = mysql_real_escape_string($name);
-
-	$query = "INSERT INTO status (user_id, status, date_set) VALUES ('$user_id','$message', NOW());";
-	$result = mysql_query($query) or die('<pre>' . mysql_error() . '</pre>' );
+if ( $role == "admin" ) {
+	redirectPage ( WEB_PAGE_TO_ROOT.'admin/setup.php' );
 }
- */
-$page[ 'body' ] .= "
-	<div class=\"body_padded\">
-		<h2>What's on your mind?</h2>
-		<div class=\"vulnerable_code_area\">
-			<form method=\"post\" name=\"statusupdate\">
-				<input type=\"hidden\" name=\"index.php\" value=\"index.php\" />
-				<table width=\"550\" border=\"0\" cellpadding=\"2\" cellspacing=\"1\">
-					<tr>
-						<td><textarea style=\"padding: 5px;\" name=\"statusMsg\" cols=\"60\" rows=\"3\" maxlength=\"140\"></textarea></td>
-					</tr>
-					<tr>
-						<td><input class=\"button\" name=\"btnUpdate\" type=\"submit\" value=\"Blob It!\" > ( Max 140 characters )</td>
-					</tr>
-				</table>
-			</form>
-		</div>
-		<div class=\"clear\"></div>
-		<br />
-	</div>";
 
+if ( $role == "faculty" ) {
+	redirectPage ( WEB_PAGE_TO_ROOT.'home.php' );
+}
 
-htmlEcho( $page );
+messagePush ( "You are not allowed access!" );
+redirectPage ( WEB_PAGE_TO_ROOT.'logout.php' );
+
 ?>

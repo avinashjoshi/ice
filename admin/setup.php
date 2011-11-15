@@ -11,7 +11,7 @@
  *
  */
 
-define( 'WEB_PAGE_TO_ROOT', '' );
+define( 'WEB_PAGE_TO_ROOT', '../' );
 require_once WEB_PAGE_TO_ROOT.'core/includes/functions.inc.php';
 
 $page = pageNewGrab();

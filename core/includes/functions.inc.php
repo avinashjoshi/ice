@@ -61,6 +61,11 @@ function pageStartup ($pActions) {
 			redirectPage (WEB_PAGE_TO_ROOT.'login.php');
 		}
 	}
+	if (in_array ('faculty', $pActions)) {
+		if (!isFaculty ()) {
+			redirectPage (WEB_PAGE_TO_ROOT.'index.php');
+		}
+	}
 	if( in_array( 'notauthenticated', $pActions ) ) {
 		if( isLoggedIn()){
 			messagePush( "You are logged in!" );
@@ -80,9 +85,24 @@ function loginUser( $pUsername ) {
 	$theSession['username'] = $pUsername;
 }
 
-function adminLogin() {
+function setDeptHead () {
 	$theSession =& sessionGrab();
-	$theSession['admin'] = true;
+	$theSession['hod'] = true;
+}
+
+function isDeptHead () {
+	$theSession =& sessionGrab();
+	return isset ( $theSession['hod'] );
+}
+
+function setRole( $pRole ) {
+	$theSession =& sessionGrab();
+	$theSession['role'] = $pRole;
+}
+
+function getRole() {
+	$theSession =& sessionGrab();
+	return ( $theSession['role'] );
 }
 
 function isLoggedIn() {
@@ -92,13 +112,21 @@ function isLoggedIn() {
 
 function isAdmin() {
 	$theSession =& sessionGrab();
-	return isset( $theSession['admin'] );
+	if ( $theSession['role'] == "admin" )
+		return true;
+}
+
+function isFaculty() {
+	$theSession =& sessionGrab();
+	if ( $theSession['role'] == "faculty" )
+		return true;
 }
 
 function logoutUser() {
 	$theSession =& sessionGrab();
 	unset( $theSession['username'] );
-	unset( $theSession['admin'] );
+	unset( $theSession['role'] );
+	unset( $theSession['hod'] );
 }
 
 function pageReload() {
@@ -108,6 +136,21 @@ function pageReload() {
 function currentUser() {
 	$theSession =& sessionGrab();
 	return ( isset( $theSession['username']) ? $theSession['username'] : '') ;
+}
+
+function currentName() {
+	$theSession =& sessionGrab();
+	$database = "";
+	if ( $theSession['role'] == "faculty" )
+		$database = "faculty";
+	if ( $theSession['role'] == "student" )
+		$database = "student";
+	if ($database == "")
+		return "No Name";
+	$query = "SELECT * FROM `{$database}` where LoginId = '{$theSession['username']}'";
+	$result = mysql_query ( $query );
+	$row = mysql_fetch_assoc ( $result );
+	return ( $row['FName'] . ' ' . $row['LName'] );
 }
 
 function redirectPage( $pLocation ) {
@@ -148,7 +191,8 @@ function getQuote() {
 	$user = "Guest";
 	$message = "Welcome";
 	if ( isLoggedIn() ) {
-		$user = currentUser();
+		$user = currentName();
+		//$user = currentUser();
 		$message = "Howdy,";
 	}
 	$quote = "{$message} <font color=\"#99cc33\">{$user}</font> !";

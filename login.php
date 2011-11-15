@@ -41,8 +41,15 @@ if( isset( $_POST[ 'Login' ] ) ) {
 		}
 		messagePush( "You have logged in as '".$user."'" );
 		loginUser( $user );
-		if ( $row["role"] == "admin" )
-			adminLogin();
+		setRole( $row["role"] );
+		if ( $row['role'] == "faculty" ) { 
+			$h_qry = "SELECT * FROM faculty WHERE LoginId = '{$user}'";
+			$h_result = @mysql_query ( $h_qry ) or die ( mysql_error() );
+			$h_row = mysql_fetch_assoc ( $h_result );
+			if ( $h_row['Position'] == "Department Head" ) {
+				setDeptHead();
+			}
+		}
 		redirectPage( 'index.php' );
 	}
 
