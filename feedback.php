@@ -59,6 +59,7 @@ if ( $mode != "" || $crn != "" ) {
 	$totalstud = isset ( $_POST['totalstud'] ) ? $_POST['totalstud'] : "";
 	$comments = isset ( $_POST['comments'] ) ? $_POST['comments'] : "";
 	$insCount = $count;
+	$i = $count;
 	while ( $count ) {
 		$value[$count] = array();
 		$value[$count]['below'] = isset ( $_POST[$count.'_below'] ) ? $_POST[$count.'_below'] : "" ;
@@ -72,6 +73,16 @@ if ( $mode != "" || $crn != "" ) {
 	}
 	if ( $totalstud == "" || $comments == "" )
 		$flag = true;
+	if ( $flag == false ) {
+		while ( $i ) {
+			if ( $totalstud != ( $value[$i]['below'] + $value[$i]['progress'] + $value[$i]['meets'] + $value[$i]['exceeds'] ) ) {
+				$flag = true;
+				messagePush ( "Sum does not match total students");
+				break;
+			}
+			$i = $i - 1;
+		}
+	}
 }
 
 $link = "feedback.php?crn={$crn}";
@@ -233,10 +244,10 @@ if ( mysql_num_rows ( $result ) < 1 ) {
 		$htmlMsg .= '<tr>';
 		$htmlMsg .= '<td><center>'. $row['CLO_No'] .'</center></td>';
 		$htmlMsg .= '<td>'. $row['CLO'] .'</td>';
-		$htmlMsg .= '<td><input type="text" class="inputBoxCLO" maxlength="10" name="'. $row['CLO_No'] .'_below" value="'. $value[$row['CLO_No']]['below'] .'"></td>';
-		$htmlMsg .= '<td><input type="text" class="inputBoxCLO" maxlength="10" name="'. $row['CLO_No'] .'_progress" value="'. $value[$row['CLO_No']]['progress'] .'" ></td>';
-		$htmlMsg .= '<td><input type="text" class="inputBoxCLO" maxlength="10" name="'. $row['CLO_No'] .'_meets" value="'. $value[$row['CLO_No']]['meets'] .'"></td>';
-		$htmlMsg .= '<td><input type="text" class="inputBoxCLO" maxlength="10" name="'. $row['CLO_No'] .'_exceeds" value="'. $value[$row['CLO_No']]['exceeds'] .'"></td>';
+		$htmlMsg .= '<td><input type="text" class="inputBoxCLO" maxlength="3" name="'. $row['CLO_No'] .'_below" value="'. $value[$row['CLO_No']]['below'] .'"></td>';
+		$htmlMsg .= '<td><input type="text" class="inputBoxCLO" maxlength="3" name="'. $row['CLO_No'] .'_progress" value="'. $value[$row['CLO_No']]['progress'] .'" ></td>';
+		$htmlMsg .= '<td><input type="text" class="inputBoxCLO" maxlength="3" name="'. $row['CLO_No'] .'_meets" value="'. $value[$row['CLO_No']]['meets'] .'"></td>';
+		$htmlMsg .= '<td><input type="text" class="inputBoxCLO" maxlength="3" name="'. $row['CLO_No'] .'_exceeds" value="'. $value[$row['CLO_No']]['exceeds'] .'"></td>';
 		$htmlMsg .= '<td><textarea class="inputBox" rows="3" cols="30" name="'. $row['CLO_No'] .'_criteria">'. $value[$row['CLO_No']]['criteria'] .'</textarea></td>';
 		$htmlMsg .= '</tr>';
 	}

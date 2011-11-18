@@ -39,9 +39,23 @@ $loginId = currentUser();
 
 $iconDir = WEB_PAGE_TO_ROOT.'core/theming/images/icons/';
 $courseList = "";
-$heading = "Couses & CLO's";
+$heading = "Courses & CLO's";
+$heading .= "
+	<div class=\"join\" style=\"float: right;\">
+	<a href=\"course.php?mode=add\"><input value=\"Add Course\" type=\"submit\"></a>
+	</div>";
 
-if ( isset ( $_POST['SubmitChng'] ) ) {
+if ( $mode == "add" ) {
+	/*
+	 * Just adding a course no CLO's
+	 */
+	if ( $course == "" ) {
+		$htmlMsg = "adding";
+	} else {
+		$mode = isset ( $_GET['row'] ) ? $_GET['row'] : "";
+		$htmlMsg = "adding";
+	}
+} else if ( isset ( $_POST['SubmitChng'] ) ) {
 	$postCourse = isset ( $_POST['course'] ) ? $_POST['course'] : "";
 	if ( $postCourse == "" ) {
 		messagePush ( "Oops Looks like something went wrong!" );
@@ -55,14 +69,10 @@ if ( isset ( $_POST['SubmitChng'] ) ) {
 	}
 	messagePush ( "Updated Successfully!" );
 	redirectPage ('course.php?course='.$postCourse.'&mode=view');
-}
-
-if ( $mode != "view" && $mode != "edit" && $mode != "" ) {
+} else if ( $mode != "add" && $mode != "view" && $mode != "edit" && $mode != "" ) {
 	messagePush ( "Invalid mode" );
 	redirectPage( 'course.php' );
-}
-
-if ( $mode == "view" ) {
+} else if ( $mode == "view" ) {
 	if ( $course == "" ) {
 		messagePush ( "You must enter a course Number!" );
 		redirectPage( 'course.php' );
@@ -140,7 +150,7 @@ if ( $mode == "view" ) {
 		</div>
 		";
 	$courseList .= "</form>";
-} else {
+} else if ( $mode != "add" ) {
 	$qry = "SELECT * FROM course;";
 	$result = @mysql_query ( $qry ) or die ( mysql_error() );
 	if ( $result && mysql_num_rows ( $result ) >= 1 ) {
@@ -160,7 +170,7 @@ if ( $mode == "view" ) {
 	}
 }
 
-$htmlMsg = $courseList;
+$htmlMsg .= $courseList;
 
 $page[ 'body' ] .= "
 	<div class=\"body_padded\">
@@ -175,57 +185,6 @@ $page[ 'body' ] .= "
 		<div class=\"clear\"></div>
 		<br />
 		</div>";
-
-/*
- * Only the current professor can continue!
- if ( !isDeptHead() ) {
-	 if ( $result && mysql_num_rows ( $result ) != 1 ) {
-		 messagePush ( "You did not instruct that class!" );
-		 redirectPage ( WEB_PAGE_TO_ROOT.'index.php' );
-	}
-}
-
-if ( isDeptHead() && $mode == "edit" ) {
-	if ( $result && mysql_num_rows ( $result ) != 1 ) {
-		messagePush ( "You cannot edit that feedback!" );
-		redirectPage ( WEB_PAGE_TO_ROOT.'index.php' );
-	}
-}
-
-if ( $mode == "view" ) {
-}
- */
-/*
-if ( isDeptHead() ) {
-	$htmlMsg .= "<br /><h3>Courses in your Department:<br /></h3>";
-	$loginId = currentUser();
-	$qry = "SELECT DNo, Ssn from faculty where LoginId = '{$loginId}';";
-	$result = @mysql_query($qry) or die('<pre>' . mysql_error() . '</pre>' );
-	$row = mysql_fetch_assoc ( $result );
-	$qry = "SELECT * FROM section, faculty where faculty.Ssn = section.InstSsn AND section.InstSsn != '{$row['Ssn']}' AND CNo IN (
-		SELECT CNo FROM course where DeptNo = '{$row['DNo']}');";
-	$result = @mysql_query($qry) or die('<pre>' . mysql_error() . '</pre>' );
-	if( $result && mysql_num_rows( $result ) >= 1 ) {
-		$htmlMsg .= '<table style="width: 100%" id="mytable" cellspacing="0" summary="Comments" align="center">';
-		$htmlMsg .= '<tr><th>CRN</th><th>Course</th><th>Course Name</th><th>Section</th><th>Year</th><th>Instructor</th></tr>';
-		while ( $row = mysql_fetch_assoc ( $result ) ) {
-			$c_qry = "SELECT * FROM course where CNo = '{$row['CNo']}';";
-			$c_result = @mysql_query($c_qry) or die('<pre>' . mysql_error() . '</pre>' );
-			$c_row = mysql_fetch_assoc ( $c_result );
-			$htmlMsg .= '<tr>';
-			$htmlMsg .= '<td><a href="feedback.php?crn='.$row['CRN'].'&mode=view">' . $row['CRN'] . '</a></td>';
-			$htmlMsg .= '<td>' . $row['CNo'] . '</td>';
-			$htmlMsg .= '<td>' . $row['SecNo'] . '</td>';
-			$htmlMsg .= '<td>' . $c_row['CName'] . '</td>';
-			$htmlMsg .= '<td>' . $row['SemYear'] . ' ' . $row['SemTime'] . '</td>';
-			$htmlMsg .= '<td>' . $row['FName'] . ' ' . $row['LName'] . '</td>';
-			$htmlMsg .= '<tr>';
-		}
-		$htmlMsg .= "</table>";
-	}
-	$htmlMsg .= "";
-}
- */
 
 htmlEcho( $page );
 ?>
