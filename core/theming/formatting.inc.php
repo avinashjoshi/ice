@@ -32,10 +32,9 @@ function htmlEcho( $pPage ) {
 	$menuBlocks = array();
 
 	$menuBlocks['profile'] = array();
-	$menuBlocks['profile'][] = array( 'id' => 'viewprofile', 'name' => 'View Profile', 'url' => 'profile/view.php' );
-	$menuBlocks['profile'][] = array( 'id' => 'editprofile', 'name' => 'Edit Profile', 'url' => 'profile/edit.php' );
-	$menuBlocks['profile'][] = array( 'id' => 'othersprofile', 'name' => 'View Users', 'url' => 'profile/follow.php' );
-	$menuBlocks['profile'][] = array( 'id' => 'following', 'name' => 'Following', 'url' => 'profile/following.php' );
+	$menuBlocks['profile'][] = array( 'id' => 'home', 'name' => 'Home', 'url' => '.' );
+	$menuBlocks['profile'][] = array( 'id' => 'courseclo', 'name' => 'Courses', 'url' => 'course.php' );
+	$menuBlocks['profile'][] = array( 'id' => 'feedback', 'name' => 'Feedback', 'url' => 'feedback.php' );
 
 	if ( isAdmin()) {
 		$menuBlocks['admin'] = array();
@@ -83,6 +82,7 @@ function htmlEcho( $pPage ) {
 	if( $messagesHtml ) {
 		$messagesHtml = "<div class=\"body_padded\">{$messagesHtml}</div>";
 	}
+	$messagesHtml = ($messagesHtml == "") ? "" : ($messagesHtml .  "<br />");
 
 	// Send Headers + main HTML code
 	Header( 'Cache-Control: no-cache, must-revalidate');		// HTTP/1.1
@@ -128,18 +128,16 @@ function htmlEcho( $pPage ) {
 	</div>
 	<div id=\"main_body\" class=\"rounded-corners\">
 	{$pPage['body']}
-	<br />
 	<center>
 	{$messagesHtml}
 	</center>
-	<br />
 	{$pPage['below_msg']}
 	</div>
 	<div class=\"clear\">
 	</div>
 	</div>
 	<div id=\"footer\" class=\"rounded-corners\">
-	<p>iCE v".getVersion()." is a Free and OpenSource Microblogging client</p>
+	<p><i>".getSoftwareName()."</i> v".getVersion()." &copy; Cold Technologies</p>
 	</div>
 	</body>
 	</html>";
@@ -215,12 +213,12 @@ function noLoginHtmlEcho( $pPage, $right ) {
 		echo "
 			<div id=\"main_body\" style=\"width: 100%\" class=\"rounded-corners-left\">";
 	}
+	$messagesHtml = ($messagesHtml == "") ? "" : ($messagesHtml .  "<br />");
 	echo "
 	{$pPage['body']}
 	<center>
 	{$messagesHtml}
 	</center>
-	<br />
 	{$pPage['below_msg']}
 	</div>
 	<div class=\"clear\">

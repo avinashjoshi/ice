@@ -92,7 +92,7 @@ function setDeptHead () {
 
 function isDeptHead () {
 	$theSession =& sessionGrab();
-	return isset ( $theSession['hod'] );
+	return (isset ( $theSession['hod'] ) ? true : false);
 }
 
 function setRole( $pRole ) {
@@ -153,40 +153,18 @@ function currentName() {
 	return ( $row['FName'] . ' ' . $row['LName'] );
 }
 
+/*
+ * Used to redirect page to a $pLocation
+ */
 function redirectPage( $pLocation ) {
 	session_commit();
 	header( "Location: {$pLocation}" );
 	exit;
 }
 
-// Start message functions for registration page only --
-function regMessagePush( $id, $pMessage ) {
-	$theSession =& sessionGrab();
-	if( !isset( $theSession[ 'regMessages' ] ) ) {
-		$theSession[ 'regMessages' ] = array();
-	}
-	$theSession[ 'regMessages' ][$id] = $pMessage;
-}
-
-function regMessagePop( $id ) {
-	$theSession =& sessionGrab();
-	if( !isset( $theSession[ 'regMessages' ] ) || count( $theSession[ 'regMessages' ] ) == 0 ) {
-		return false;
-	}
-	$retVal = $theSession[ 'regMessages' ][$id];
-	unset($theSession[ 'regMessages' ][$id]);
-	return ( $retVal );
-}
-
-function messagesRegPopAllToHtml() {
-	$messagesHtml = '';
-	while( $message = messagePop() ) {	// TODO- sharpen!
-		$messagesHtml .= "<div class=\"message\">{$message}</div>";
-	}
-	return $messagesHtml;
-}
-// --END
-
+/*
+ * Your Howdy/Welcome message next to iCE logo
+ */
 function getQuote() {
 	$user = "Guest";
 	$message = "Welcome";
@@ -261,6 +239,7 @@ else {
 	$DBMS = "No DBMS selected.";
 	$DBMS_errorFunc = '';
 }
+
 $DBMS_connError = '<div align="center">
 	<img src="'.WEB_PAGE_TO_ROOT.'core/theming/images/logo.png">
 	<pre style="font-size: 16px;">Oops! Looks like you do not have a database setup yet!<br /></pre>
@@ -275,6 +254,11 @@ $DBMS_tablesError = '<div align="center">
 	<pre>[Unable to connect to the database: '. mysql_error() .']<br /></pre>
 	</div>';
 
+/*
+ * I have this to check the sanity of current table.
+ * Not fully implemented. Can be maede better.
+ * Will add later
+ */
 function databaseCheck() {
 	global $_DBC;
 	global $DBMS_tablesError;
@@ -304,11 +288,20 @@ function databaseCheck() {
 		die ($DBMS_tablesError);
 }
 
+/*
+ * databaseConnect() is used to just connect to the database 
+ * Connection details in /config/config.inc.php
+ */
 function databaseConnect() {
 	global $_DBC;
 	global $DBMS;
 	global $DBMS_connError;
 	if ($DBMS == 'MySQL') {
+		/*
+		 * mysql_connect() connects to Database using host, username & password as arguments
+		 * mysql_select_db() selects the database with the above connection
+		 * I have used @ to supress verbose error reports
+		 */
 		if( !@mysql_connect( $_DBC[ 'db_server' ], $_DBC[ 'db_user' ], $_DBC[ 'db_password' ] )
 			|| !@mysql_select_db( $_DBC[ 'db_database' ] ) ) {
 				echo "<title>Oops!</title>";
@@ -319,9 +312,27 @@ function databaseConnect() {
 }
 // -- END
 
+/*
+ * stopSQLi takes a string and returns string
+ * after removing possible SQL Injection
+ */
 function stopSQLi( $string ) {
+	/*
+	 * stripslashes() strips slashes in the string
+	 * Returns a string with backslashes stripped off
+	 */
 	$string = stripslashes( $string );
+	/*
+	 * mysql_real_escape_string prepends backslashes
+	 * to the following characters: \x00, \n, \r, \, ', " and \x1a
+	 * in $string to prevent SQL Injection
+	 */
 	$string = mysql_real_escape_string( $string );
+	/*
+	 * You can use htmlspecialchars()
+	 * This function is useful in preventing user-supplied text
+	 * from containing HTML markup, such as in a message board or guest book application
+	 */
 	return $string;
 }
 

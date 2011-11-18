@@ -14,6 +14,8 @@
 define( 'WEB_PAGE_TO_ROOT', '../' );
 require_once WEB_PAGE_TO_ROOT.'core/includes/functions.inc.php';
 
+pageStartup( array( 'authenticated', 'admin' ) );
+
 $page = pageNewGrab();
 $page[ 'title' ] .= $page[ 'title_separator' ].'Setup';
 $page[ 'page_id' ] = 'setup';

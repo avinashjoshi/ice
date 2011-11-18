@@ -21,9 +21,17 @@ databaseConnect();
 if( isset( $_POST[ 'Login' ] ) ) {
 
 	$user = $_POST[ 'netid' ];
+	if ( $user == "" ) {
+		messagePush ( "You must enter a value for username" );
+		redirectPage ( 'login.php' );
+	}
 	$user = stopSQLi( $user );
 
 	$pass = $_POST[ 'password' ];
+	if ( $pass == "" ) {
+		messagePush ( "You must enter a value for password" );
+		redirectPage ( 'login.php' );
+	}
 	stopSQLi( $pass );
 	$pass = md5( $pass );
 	stopSQLi( $pass );

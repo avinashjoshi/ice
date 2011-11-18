@@ -15,7 +15,7 @@
 define( 'WEB_PAGE_TO_ROOT', '../' );
 require_once WEB_PAGE_TO_ROOT.'core/includes/functions.inc.php';
 
-pageStartup( array( 'authenticated' ) );
+pageStartup( array( 'authenticated', 'admin' ) );
 
 $page = pageNewGrab();
 $page[ 'title' ] .= $page[ 'title_separator' ].'What\'s on your mind?';

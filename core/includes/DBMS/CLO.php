@@ -66,4 +66,13 @@
 ('EE6324','2','Cryptanalysis'),
 ('EE6324','3','Public Key Cryptography'),
 ('EE6324','4','Stack Overflow Attacks'),
-('EE6324','5','Operating Systems Securitys')
+('EE6324','5','Operating Systems Securitys'),
+('CS6360','1','ER and EER Relational Conceptual Data Model'),
+('CS6360','2','Relational Data Model'),
+('CS6360','3','ER/EER to Relational Data Model Mapping'),
+('CS6360','4','Query Languges (Relational Algebra, SQL, etc)'),
+('CS6360','5','Query Processing and Optimization'),
+('CS6360','6','Functional Dependency and Normalization'),
+('CS6360','7','Transaction Processing Concepts'),
+('CS6360','8','Concurrency Control Techniques'),
+('CS6360','9','Recovery')

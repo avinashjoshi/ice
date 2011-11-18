@@ -10,13 +10,15 @@
  * Creator: Avinash Joshi <axj107420@utdallas.edu>
  *
  */
+
 /*
- * This file contains all of the code to setup the initial MySQL database. (setup.php)
+ * This file contains all of the code to setup the initial MySQL database.
  *
  */
 
-global $DBMS;
-
+/*
+ * $_DBC is defined in /config/config.inc.php
+ */
 if( !@mysql_connect( $_DBC[ 'db_server' ], $_DBC[ 'db_user' ], $_DBC[ 'db_password' ] ) ) {
 	messagePush( "Could not connect to the database - please check the config file." );
 	pageReload();
@@ -130,9 +132,10 @@ $db_query = "CREATE TABLE `{$table}` (
 	`SemYear` varchar(20),
 	`SemTime` varchar(20),
 	`InstSsn` varchar(10) NOT NULL REFERENCES `faculty` (`Ssn`),
-		`Comment` varchar(255),
-		PRIMARY KEY (`CRN`),
-		FOREIGN KEY (`CNo`) REFERENCES `course` (`CNo`)
+	`Comment` varchar(255),
+	`totalstud` int(5) DEFAULT 0,
+	PRIMARY KEY (`CRN`),
+	FOREIGN KEY (`CNo`) REFERENCES `course` (`CNo`)
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 if( !mysql_query( $db_query ) ){
 	messagePush( "Table could not be created<br />SQL: ".mysql_error() );
@@ -144,7 +147,7 @@ $table = "clo";
 $db_query = "CREATE TABLE `{$table}` (
 	`CNo` varchar(10) NOT NULL,
 	`CLO_No` int (3) NOT NULL,
-	`CLO` varchar (200) NOT NULL,
+	`CLO` varchar (255) NOT NULL,
 	PRIMARY KEY (`CNo`,`CLO_No`),
 	FOREIGN KEY (`CNo`) REFERENCES `course` (`CNo`)
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
@@ -154,7 +157,7 @@ if( !mysql_query( $db_query ) ){
 }
 messagePush( "Table `{$table}` created");
 
-$table = "teach";
+$table = "feedback";
 $db_query = "CREATE TABLE `{$table}` (
 	`CRN` int(6) NOT NULL REFERENCES `section` (`CRN`),
 	`CLO_No` int (3) NOT NULL REFERENCES `clo` (`CLO_No`),
@@ -162,8 +165,7 @@ $db_query = "CREATE TABLE `{$table}` (
 	`Meet` varchar (10) NOT NULL,
 	`Progress` varchar (10) NOT NULL,
 	`Below` varchar (10) NOT NULL,
-	`Metric` char(1) NOT NULL,
-	`Criteria` varchar (255) NOT NULL,
+	`Criteria` blob NOT NULL, -- varchar (255) NOT NULL,
 	PRIMARY KEY (`CRN`,`CLO_No`)
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 if( !mysql_query( $db_query ) ){
@@ -182,6 +184,7 @@ $db_query = "INSERT INTO `{$table}` VALUES
 	( 'chandra', MD5('toor'), 'faculty' ),
 	( 'lkhan', MD5('toor'), 'faculty' ),
 	( 'gupta', MD5('toor'), 'faculty' ),
+	( 'skarrah', MD5('toor'), 'faculty' ),
 	( 'ravip', MD5('toor'), 'faculty' ),
 	( 'rbk', MD5('toor'), 'faculty' );";
 if( !mysql_query( $db_query ) ){
@@ -204,9 +207,10 @@ messagePush( "Inserted values into table `{$table}`");
 $table = "faculty";
 $db_query = "INSERT INTO `{$table}` VALUES
 	( '999887777', 'Gopal', '', 'Gupta', 'gupta', '1958-01-09', 'UTDallas', 'M', '40000', 'gupta@gmail.com', 'ECSS 4.907', 'Department Head', '9728834107', 1 ),
-	( '123456789', 'Balaji', 'K', 'Raghavachari', 'rbk', '1965-01-09', 'UTDallas', 'M', '30000', 'rbk@gmail.com', 'ECSS 4.225', 'Professor', '9728832136', 1 ),
-	( '666884444', 'Ravi', '', 'Prakash', 'ravip', '1965-01-09', 'UTDallas', 'M', '30000', 'ravip@gmail.com', 'ECSS 4.225', 'Professor', '9728832136', 1 ),
-	( '888665555', 'Latifur', '', 'Khan', 'lkhan', '1965-01-09', 'UTDallas', 'M', '30000', 'lkhan@gmail.com', 'ECSS 4.225', 'Associate Professor', '9728834137', 1 ),
+	( '123456789', 'Balaji', 'K', 'Raghavachari', 'rbk', '1965-01-09', 'UTDallas', 'M', '30000', 'rbk@gmail.com', 'ECSS 4.225', 'Associate Professor', '9728832136', 1 ),
+	( '666884444', 'Ravi', '', 'Prakash', 'ravip', '1965-01-09', 'UTDallas', 'M', '30000', 'ravip@gmail.com', 'ECSS 4.225', 'Associate Professor', '9728832136', 1 ),
+	( '999881111', 'Shyam', 'S', 'Karrah', 'skarrah', '1965-01-09', 'UTDallas', 'M', '35000', 'skarrah@gmail.com', 'ECSS 4.704', 'Senior Lecturer', '9728834197', 1 ),
+	( '888665555', 'Latifur', 'R', 'Khan', 'lkhan', '1965-01-09', 'UTDallas', 'M', '30000', 'lkhan@gmail.com', 'ECSS 4.225', 'Associate Professor', '9728834137', 1 ),
 	( '333445555', 'Ramaswamy', '', 'Chandrashekaran', 'chandra', '1955-01-09', 'UTDallas', 'M', '35000', 'chandra@gmail.com', 'ECSS 4.611', 'Professor', '9728832032', 1 )
 	;";
 if( !mysql_query( $db_query ) ){
@@ -219,6 +223,7 @@ $table = "course";
 $db_query = "INSERT INTO `{$table}` VALUES
 	( 'CS6360', 'Database Design', 'SOL Normalization', 3, 1 ),
 	( 'CS6363', 'Design and Analysis of Computer Algorithms', 'Foundation, Basics of Algorithms', 3, 1 ),
+	( 'CS6371', 'Advanced Programming Languages', 'Functional Programming, Lambda Calculus, Logic Programming', 3, 1 ),
 	( 'CS1337', 'Computer Science I (JAVA)', ' Learning outcomes - Java Programming', 3, 1 ),
 	( 'CS2305', 'Discrete Math for Computing I', ' Discrete analysis', 3, 1 ),
 	( 'CS2336', 'Computer Science II - Java', 'Advanced Java Programming', 3, 1 ),
@@ -234,7 +239,8 @@ if( !mysql_query( $db_query ) ){
 messagePush( "Inserted values into table `{$table}`");
 
 $table = "section";
-$db_query = "INSERT INTO `{$table}` VALUES
+$db_query = "INSERT INTO `{$table}` (CRN, CNo, SecNo, SecName, SemYear, SemTime, InstSsn, Comment) VALUES
+	( '81476', 'CS6371', '001', '', '2011', 'Fall', '999887777', '' ),
 	( '84505', 'CS6360', '003', '', '2011', 'Fall', '123456789', '' ),
 	( '84504', 'CS6360', '002', '', '2011', 'Fall', '888665555', '' ),
 	( '85691', 'CS6363', '004', '', '2011', 'Fall', '333445555', '' ),
@@ -264,19 +270,10 @@ if( !mysql_query( $db_query ) ){
 }
 
 /*
-
 $baseUrl = 'http://'.$_SERVER[ 'SERVER_NAME' ].$_SERVER[ 'PHP_SELF' ];
 $stripPos = strpos( $baseUrl, 'ice/setup.php' );
 $baseUrl = substr( $baseUrl, 0, $stripPos ).'ice/hackable/users/';
-
-$insert = "INSERT INTO users VALUES
-			('1','Site','Admin','root',MD5('toor'),'dcc03fdbd17882124fdb499bb26ed29e','1','1','admin.jpg');";
-if( !mysql_query( $insert ) ){
-			messagePush( "Data could not be inserted into 'users' table<br />SQL: ".mysql_error() );
-					pageReload();
-}
-messagePush( "Data inserted into 'users' table." );
- */
+*/
 
 //Setup complete and successful
 messagePush( "Setup successful!" );
