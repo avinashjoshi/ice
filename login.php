@@ -51,12 +51,19 @@ if( isset( $_POST[ 'Login' ] ) ) {
 		loginUser( $user );
 		setRole( $row["role"] );
 		if ( $row['role'] == "faculty" ) { 
+			$h_qry = "SELECT * FROM faculty as f, department as d WHERE LoginId = '{$user}' AND f.Ssn = d.DeptHead";
+			$h_result = @mysql_query ( $h_qry ) or die ( mysql_error() );
+			if ( mysql_num_rows ( $h_result ) >= 1 ) {
+				setDeptHead();
+			}
+			/*
 			$h_qry = "SELECT * FROM faculty WHERE LoginId = '{$user}'";
 			$h_result = @mysql_query ( $h_qry ) or die ( mysql_error() );
 			$h_row = mysql_fetch_assoc ( $h_result );
 			if ( $h_row['Position'] == "Department Head" ) {
 				setDeptHead();
 			}
+			 */
 		}
 		redirectPage( 'index.php' );
 	}

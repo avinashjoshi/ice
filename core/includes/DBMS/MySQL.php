@@ -83,7 +83,7 @@ $db_query = "CREATE TABLE `{$table}` (
 	`DNo` int(6),
 	PRIMARY KEY (`Ssn`),
 	FOREIGN KEY (`LoginId`) REFERENCES `users` (`LoginId`),
-	FOREIGN KEY (`DNo`) REFERENCES `Department` (`Dnumber`)
+	FOREIGN KEY (`DNo`) REFERENCES `department` (`Dnumber`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 if( !mysql_query( $db_query ) ){
 	messagePush( "Table could not be created<br />SQL: ".mysql_error() );
@@ -93,7 +93,7 @@ messagePush( "Table `{$table}` created");
 
 $table = "department";
 $db_query = "CREATE TABLE `{$table}` (
-	`DNumber` int(6) NOT NULL,
+	`DNumber` int(6) NOT NULL AUTO_INCREMENT,
 	`DName` varchar(30) NOT NULL,
 	`DeptHead` varchar(20) NOT NULL,
 	`Location` varchar(30),
@@ -115,7 +115,7 @@ $db_query = "CREATE TABLE `{$table}` (
 	`Credits` int (2),
 	`DeptNo` int (6),
 	PRIMARY KEY (`CNo`),
-	FOREIGN KEY (`DeptNo`) REFERENCES `Department` (`DNumber`)
+	FOREIGN KEY (`DeptNo`) REFERENCES `department` (`DNumber`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 if( !mysql_query( $db_query ) ){
 	messagePush( "Table could not be created<br />SQL: ".mysql_error() );
@@ -194,9 +194,9 @@ if( !mysql_query( $db_query ) ){
 messagePush( "Inserted values into table `{$table}`");
 
 $table = "department";
-$db_query = "INSERT INTO `{$table}` VALUES
-	( 1, 'Computer Science', '999887777', 'ECSS', '9876543210' ),
-	( 2, 'Computer Engineering', '999887777', 'ECSS', '9876543210' )
+$db_query = "INSERT INTO `{$table}` (DName, DeptHead, Location, Phone) VALUES
+	( 'Computer Science', '999887777', 'ECSS', '9876543210' ),
+	( 'Computer Engineering', '999887777', 'ECSS', '9876543210' )
 	;";
 if( !mysql_query( $db_query ) ){
 	messagePush( "Table could not be created<br />SQL: ".mysql_error() );

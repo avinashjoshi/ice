@@ -53,7 +53,7 @@ if ( isDeptHead() ) {
 	$result = @mysql_query($qry) or die('<pre>' . mysql_error() . '</pre>' );
 	$row = mysql_fetch_assoc ( $result );
 	$qry = "SELECT * FROM section, faculty where faculty.Ssn = section.InstSsn AND section.InstSsn != '{$row['Ssn']}' AND CNo IN (
-		SELECT CNo FROM course where DeptNo = '{$row['DNo']}');";
+		SELECT CNo FROM course where DeptNo IN (SELECT DNumber FROM department WHERE DeptHead='{$row['Ssn']}'));";
 	$result = @mysql_query($qry) or die('<pre>' . mysql_error() . '</pre>' );
 	if( $result && mysql_num_rows( $result ) >= 1 ) {
 		$htmlMsg .= '<table style="width: 100%" id="mytable" cellspacing="0" summary="Comments" align="center">';

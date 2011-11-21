@@ -26,19 +26,21 @@ function &pageNewGrab() {
 	return $returnArray;
 }
 
-
 function htmlEcho( $pPage ) {
 
 	$menuBlocks = array();
 
-	$menuBlocks['profile'] = array();
-	$menuBlocks['profile'][] = array( 'id' => 'home', 'name' => 'Home', 'url' => '.' );
-	$menuBlocks['profile'][] = array( 'id' => 'courseclo', 'name' => 'Courses', 'url' => 'course.php' );
-	$menuBlocks['profile'][] = array( 'id' => 'feedback', 'name' => 'Feedback', 'url' => 'feedback.php' );
-
 	if ( isAdmin()) {
 		$menuBlocks['admin'] = array();
 		$menuBlocks['admin'][] = array( 'id' => 'setup', 'name' => 'Setup', 'url' => 'admin/setup.php' );
+		$menuBlocks['admin'][] = array( 'id' => 'dept', 'name' => 'Department', 'url' => 'admin/department.php' );
+		$menuBlocks['admin'][] = array( 'id' => 'adddept', 'name' => 'Add Department', 'url' => 'admin/department.php?mode=add' );
+	} else {
+		$menuBlocks['profile'] = array();
+		$menuBlocks['profile'][] = array( 'id' => 'home', 'name' => 'Home', 'url' => '.' );
+		$menuBlocks['profile'][] = array( 'id' => 'courseclo', 'name' => 'Course & CLO', 'url' => 'course.php' );
+		$menuBlocks['profile'][] = array( 'id' => 'addcourse', 'name' => 'Add Course', 'url' => 'course.php?mode=add' );
+		$menuBlocks['profile'][] = array( 'id' => 'feedback', 'name' => 'Feedback', 'url' => 'feedback.php' );
 	}
 
 	$menuHtml = '';

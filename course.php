@@ -33,10 +33,6 @@ databaseConnect();
 $htmlMsg = "";
 $loginId = currentUser();
 
-//$qry = "SELECT * FROM section WHERE CRN='{$crn}' AND InstSsn = (
-//	SELECT Ssn FROM faculty WHERE LoginId='{$loginId}');";
-//$result = @mysql_query ( $qry ) or die (mysql_error());
-
 $iconDir = WEB_PAGE_TO_ROOT.'core/theming/images/icons/';
 $courseList = "";
 $heading = "Courses & CLO's";
@@ -45,15 +41,208 @@ $heading .= "
 	<a href=\"course.php?mode=add\"><input value=\"Add Course\" type=\"submit\"></a>
 	</div>";
 
+function addCLONumber () {
+	global $link;
+	global $htmlMsg;
+	global $course;
+	global $number;
+	$htmlMsg .= "<form action=\"{$link}\" method=\"GET\" name=\"form\">";
+	$htmlMsg .= "<input type=\"hidden\" name=\"course\" value=\"{$course}\" />";
+	$htmlMsg .= "<input type=\"hidden\" name=\"mode\" value=\"add\" />";
+	$htmlMsg .= '<table style="width: 260px" id="mytable" cellspacing="0" summary="Comments" align="center">';
+	$htmlMsg .= '<tr>';
+	$htmlMsg .= '<td style="border-top: 1px solid #C1DAD7;" width=180>Number of CLO\'s to be added:</td>';
+	$htmlMsg .= '<td style="padding-top: 15px; border-top: 1px solid #C1DAD7;" width="50"><input type="text" class="inputBox" style="width: 25px;" maxlength="2" value="'. $number .'" name="row" /></td>';
+	$htmlMsg .= '</tr>';
+	$htmlMsg .= '</table>';
+	$htmlMsg .= "
+		<br />
+		<div class=\"join\">
+		<input class=\"button\" type=\"submit\" value=\"Add\">
+		<a href=\"course.php\"><input value=\"Back\" type=\"submit\"></a>
+		</div>
+		";
+	$htmlMsg .= "</form>";
+	return $htmlMsg;
+}
+
+/*
+ * Pre check for Depat Head or not
+ */
+if ( ($mode == "add" || $mode == "edit") && !isDeptHead() ) {
+	messagePush ( "You are not allowed to add/edit" );
+	redirectPage ( 'home.php' );
+}
+
 if ( $mode == "add" ) {
 	/*
 	 * Just adding a course no CLO's
 	 */
+	$page[ 'page_id' ] = 'addcourse';
 	if ( $course == "" ) {
-		$htmlMsg = "adding";
+		$cno = isset ( $_POST['cno'] ) ? $_POST['cno'] : "";
+		$cname = isset ( $_POST['cname'] ) ? $_POST['cname'] : "";
+		$cdesc = isset ( $_POST['cdesc'] ) ? $_POST['cdesc'] : "";
+		$ccredits = isset ( $_POST['ccredits'] ) ? $_POST['ccredits'] : "";
+		$dept = isset ( $_POST['dept'] ) ? $_POST['dept'] : "";
+		if ( isset ( $_POST['AddCourse'] ) ) {
+			$qry = "SELECT * FROM course WHERE CNo='{$cno}'";
+			$result = @mysql_query ( $qry );
+			if ( !is_numeric ( $ccredits ) ) {
+				messagePush ( "Credits must be a number" );
+				$ccredits = "";
+			} else if ( $result && mysql_num_rows ( $result ) != 0 ) {
+				messagePush ( "This course already exists!" );
+			} else {
+				/*
+				 * Now Inserting into table course
+				 */
+				$qry = "INSERT INTO course values ('{$cno}', '{$cname}', '{$cdesc}', {$ccredits}, {$dept});";
+				$result = @mysql_query ( $qry ) or die (mysql_error());
+				if ( !$result ) {
+					messagePush ( "Oops! Something went wrong" );
+				} else {
+					messagePush ( "Course {$cno} inserted!" );
+					redirectPage ( 'course.php' );
+				}
+			}
+		}
+		$qry = "SELECT * FROM department;";
+		$result = @mysql_query ( $qry );
+		$link = "";
+		$heading = "";
+		$htmlMsg .= "<form action=\"{$link}\" method=\"POST\" name=\"formcourse\">";
+		$htmlMsg .= '<table style="width: 100%" id="mytable" cellspacing="0" summary="Comments" align="center">';
+		$htmlMsg .= '<tr><th colspan="2">Adding Course</th></tr>';
+		$htmlMsg .= '<tr>';
+		$htmlMsg .= '<th class="spec" scope="row"><center>Course ID</center></th>';
+		$htmlMsg .= '<td><input type="text" class="inputBox" maxlength="6" name="cno" value="'. $cno .'" /></td>';
+		$htmlMsg .= '</tr>';
+		$htmlMsg .= '<tr>';
+		$htmlMsg .= '<th class="spec" scope="col"><center>Course Name</center></th>';
+		$htmlMsg .= '<td><input type="text" class="inputBox" maxlength="6" name="cname" value="'. $cname .'" /></td>';
+		$htmlMsg .= '</tr>';
+		$htmlMsg .= '<tr>';
+		$htmlMsg .= '<th class="spec" scope="row"><center>Course Description</center></th>';
+		$htmlMsg .= '<td><textarea  cols="60" rows="4" class="inputBox" maxlength="255" name="cdesc">'. $cdesc .'</textarea></td>';
+		$htmlMsg .= '</tr>';
+		$htmlMsg .= '<tr>';
+		$htmlMsg .= '<th class="spec" scope="col"><center>Credits</center></th>';
+		$htmlMsg .= '<td><input type="text" class="inputBox" maxlength="1" name="ccredits" value="'. $ccredits .'" /></td>';
+		$htmlMsg .= '</tr>';
+		$htmlMsg .= '<tr>';
+		$htmlMsg .= '<th class="spec" scope="row"><center>Department</center></th>';
+		$htmlMsg .= '<td> <select name="dept">';
+		while ( $result && $row = mysql_fetch_assoc ( $result ) ) {
+			$htmlMsg .= '<option value="'. $row['DNumber'] .'">'. $row['DName'] .'</option>';
+		}
+		$htmlMsg .= '</select> </td>';
+		$htmlMsg .= '</tr>';
+		$htmlMsg .= "</table><br />";
+		$htmlMsg .= "
+			<br />
+			<div class=\"join\">
+			<input class=\"button\" type=\"submit\" value=\"Add Course\" name=\"AddCourse\">
+			<a href=\"course.php\"><input value=\"Back\" type=\"submit\"></a>
+			</div>
+			";
+		$htmlMsg .= "</form>";
 	} else {
-		$mode = isset ( $_GET['row'] ) ? $_GET['row'] : "";
-		$htmlMsg = "adding";
+		$number = isset ( $_GET['row'] ) ? $_GET['row'] : "";
+		$page[ 'page_id' ] = 'courseclo';
+		$heading = "Adding CLO for {$course}";
+		$link = "";
+		if ( isset ($_GET['row']) && $number == "" ) {
+			messagePush ( "You must have the number of CLO's specified" );
+			$htmlMsg = addCLONumber();
+		} else {
+			if ( isset ($_GET['row']) && !is_numeric ( $number ) ) {
+				messagePush ( "Number of CLO's must be a number!" );
+				$number = "";
+				$htmlMsg = addCLONumber();
+			} else if ( !isset ($_GET['row'])) {
+				$htmlMsg = addCLONumber();
+			} else {
+				if ( isset ( $_POST['AddCLO'] ) ) {
+					$flag = false;
+					$count = isset ( $_POST['count'] ) ? $_POST['count'] : "";
+					$total = isset ( $_POST['total'] ) ? $_POST['total'] : "";
+					$i = $count;
+					$value = array();
+					while ( $i <= $total ) {
+						$value[$i] = isset ( $_POST[$i] ) ? $_POST[$i] : "";
+						if ( $value[$i] == "" )
+							$flag = true;
+						$i = $i + 1;
+					}
+					if ( $flag == true ) {
+						messagePush ( "Enter all CLO's" );
+					} else if ( $count == "" || $total == "" ) {
+						messagePush ( "Oops! Looks like something went wrong!" );
+						redirectPage ( "course.php?course={$course}&mode=add" );
+					} else {
+						$qry = "START TRANSACTION;";
+						$result = @mysql_query ( $qry ) or die ( mysql_error() );
+						while ( $count <= $total ) {
+							$qry = "INSERT INTO clo VALUES ('{$course}', {$count}, '{$_POST[$count]}')";
+							$result = @mysql_query ( $qry );
+							if ( !$result ) {
+								messagePush ( "Oops! something went wrong!" );
+								$qry = "ROLLBACK";
+								$result = @mysql_query ( $qry );
+								redirectPage ( "course.php" );
+							}
+							$count = $count + 1;
+						}
+						$qry = "COMMIT";
+						$result = @mysql_query ( $qry );
+						messagePush ( "Inserted the CLO's");
+						redirectPage ( "course.php?course={$course}&mode=view" );
+					}
+				}
+				$qry = "SELECT * FROM clo WHERE CNo='{$course}';";
+				$result = @mysql_query ( $qry );
+				if ( $result && mysql_num_rows ( $result ) == 0 ) {
+					messagePush ( "Course {$course} does not exist!" );
+					redirectPage ( 'course.php' );
+				}
+				$qry = "SELECT * FROM clo WHERE CNo='{$course}';";
+				$result_old = @mysql_query ( $qry );
+				$qry = "SELECT COUNT(*) AS count FROM clo WHERE CNo='{$course}';";
+				$result = @mysql_query ( $qry );
+				$row = mysql_fetch_assoc ( $result );
+				$i = $row['count'] + 1;
+				$number = $number + $row['count'];
+				$link = "";
+				$htmlMsg .= "<form action=\"{$link}\" method=\"POST\" name=\"form\">";
+				$htmlMsg .= "<input type=\"hidden\" name=\"count\" value=\"{$i}\">";
+				$htmlMsg .= "<input type=\"hidden\" name=\"total\" value=\"{$number}\">";
+				$htmlMsg .= '<table style="width: 100%" id="mytable" cellspacing="0" summary="Comments" align="center">';
+				$htmlMsg .= '<tr><th width=10><center>CLO. No.</center></th><th width=100><center>CLO</center></th></tr>';
+				while ( $result_old && $row_old = mysql_fetch_assoc ( $result_old ) ) {
+					$htmlMsg .= '<tr>';
+					$htmlMsg .= '<td align="center">' . $row_old['CLO_No'] . '</td>';
+					$htmlMsg .= '<td>' . $row_old['CLO'] . '</td>';
+					$htmlMsg .= '</tr>';
+				}
+				while ( $i <= $number ) {
+					$htmlMsg .= "<tr>";
+					$htmlMsg .= "<td><center>{$i}</center></td>";
+					$htmlMsg .= '<td><input type="text" class="inputBox" maxlength="255" name="'. $i .'" value=""></td>';
+					$htmlMsg .= "</tr>";
+					$i = $i + 1;
+				}
+				$htmlMsg .= '</table>';
+				$htmlMsg .= "
+					<br />
+					<div class=\"join\">
+					<input class=\"button\" type=\"submit\" value=\"Add CLO\" name=\"AddCLO\">
+					<a href=\"course.php\"><input value=\"Back\" type=\"submit\"></a>
+					</div>
+					";
+				$htmlMsg .= "</form>";
+			}
+		}
 	}
 } else if ( isset ( $_POST['SubmitChng'] ) ) {
 	$postCourse = isset ( $_POST['course'] ) ? $_POST['course'] : "";
@@ -155,7 +344,7 @@ if ( $mode == "add" ) {
 	$result = @mysql_query ( $qry ) or die ( mysql_error() );
 	if ( $result && mysql_num_rows ( $result ) >= 1 ) {
 		$courseList .= '<table style="width: 100%" id="mytable" cellspacing="0" summary="Comments" align="center">';
-		$courseList .= '<tr><th align="center" width="80px">Course ID</th><th>Course Name</th><th colspan="3"><center>Options</center></th></tr>';
+		$courseList .= '<tr><th align="center" width="80px">Course ID</th><th>Course Name</th><th colspan="3"><center>CLO Options</center></th></tr>';
 		while ( $row = mysql_fetch_assoc ( $result ) ) {
 			$link = WEB_PAGE_TO_ROOT.'course.php?course='.$row['CNo'];
 			$courseList .= '<tr>';
@@ -172,7 +361,7 @@ if ( $mode == "add" ) {
 
 $htmlMsg .= $courseList;
 
-$page[ 'body' ] .= "
+$page[ 'below_msg' ] .= "
 	<div class=\"body_padded\">
 	<h2>{$heading}</h2>
 	<div class=\"content\">

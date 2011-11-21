@@ -224,7 +224,7 @@ if ( mysql_num_rows ( $result ) < 1 ) {
 	}
 
 } else if ( $mode == "add") {
-	$link = 'feedback.php';
+	$link = 'feedback.php?crn='.$crn.'&mode=add';
 	$htmlMsg .= "<h3>{$CNo} - {$CName} - {$crn}</h3>";
 	$htmlMsg .= "<form action=\"{$link}\" method=\"post\" name=\"form\">";
 	$htmlMsg .= "<input type=\"hidden\" name=\"crn\" value=\"{$crn}\" />";
