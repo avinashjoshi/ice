@@ -100,7 +100,7 @@ if ( $mode == "add" ) {
 			<br />
 			<div class=\"join\">
 			<input class=\"button\" type=\"submit\" value=\"Add Department\" name=\"AddDept\">
-			<a href=\"course.php\"><input value=\"Back\" type=\"submit\"></a>
+			<a href=\"department.php\"><input value=\"Back\" type=\"submit\"></a>
 			</div>
 			";
 		$htmlMsg .= "</form>";
@@ -110,7 +110,7 @@ if ( $mode == "add" ) {
 	$result = @mysql_query ( $qry ) or die ( mysql_error() );
 	if ( $result && mysql_num_rows ( $result ) >= 1 ) {
 		$courseList .= '<table style="width: 100%" id="mytable" cellspacing="0" summary="Comments" align="center">';
-		$courseList .= '<tr><th align="center" width="80px">Department</th><th>Head</th><th><center>Location</center></th><th>Phone</th></tr>';
+		$courseList .= '<tr><th align="center">Department</th><th>Head</th><th width="100"><center>Location</center></th><th width="100">Phone</th></tr>';
 		while ( $row = mysql_fetch_assoc ( $result ) ) {
 			$link = WEB_PAGE_TO_ROOT.'admin/department.php?course='.$row['DNumber'];
 			$courseList .= '<tr>';

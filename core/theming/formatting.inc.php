@@ -35,6 +35,8 @@ function htmlEcho( $pPage ) {
 		$menuBlocks['admin'][] = array( 'id' => 'setup', 'name' => 'Setup', 'url' => 'admin/setup.php' );
 		$menuBlocks['admin'][] = array( 'id' => 'dept', 'name' => 'Department', 'url' => 'admin/department.php' );
 		$menuBlocks['admin'][] = array( 'id' => 'adddept', 'name' => 'Add Department', 'url' => 'admin/department.php?mode=add' );
+		$menuBlocks['admin'][] = array( 'id' => 'faculty', 'name' => 'Faculty List', 'url' => 'admin/faculty.php' );
+		$menuBlocks['admin'][] = array( 'id' => 'addfaculty', 'name' => 'Add Faculty', 'url' => 'admin/faculty.php?mode=add' );
 	} else {
 		$menuBlocks['profile'] = array();
 		$menuBlocks['profile'][] = array( 'id' => 'home', 'name' => 'Home', 'url' => '.' );
