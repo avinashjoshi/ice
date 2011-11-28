@@ -145,12 +145,14 @@ function currentName() {
 		$database = "faculty";
 	if ( $theSession['role'] == "student" )
 		$database = "student";
+	if ( $theSession['role'] == "admin" )
+		return ( "Admin" );
 	if ($database == "")
 		return "No Name";
 	$query = "SELECT * FROM `{$database}` where LoginId = '{$theSession['username']}'";
 	$result = mysql_query ( $query );
 	$row = mysql_fetch_assoc ( $result );
-	return ( $row['FName'] . ' ' . $row['LName'] );
+	return ( $row['FName'][0] . '. ' . $row['LName'] );
 }
 
 /*

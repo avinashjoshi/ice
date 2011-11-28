@@ -123,7 +123,7 @@ function htmlEcho( $pPage ) {
 	<div id=\"container\" class=\"rounded-corners\">
 	<div id=\"main_menu\">
 	<div id=\"profile_info\">
-	<div>User Name</div>
+	<div><b>Navigation</b></div>
 	<div>{$adminLink}</div>
 	</div>
 	<div id=\"main_menu_padded\">

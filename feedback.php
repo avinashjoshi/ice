@@ -88,8 +88,10 @@ if ( $mode != "" || $crn != "" ) {
 $link = "feedback.php?crn={$crn}";
 
 if ( isset ( $_POST['SubmitFeed'] ) || $mode == "add" ) {
-	$qry = "SELECT * FROM feedback WHERE CRN='{$crn}' AND CLO_No IN (
-		SELECT CLO_No FROM clo WHERE CNo='${CNo}');";
+	//$qry = "SELECT * FROM feedback WHERE CRN='{$crn}' AND CLO_No IN (
+	//	SELECT CLO_No FROM clo WHERE CNo='${CNo}');";
+	$qry = "SELECT * FROM feedback WHERE CRN='{$crn}' AND CNo = '{$CNo}' AND CLO_No IN (
+		SELECT CLO_No FROM clo WHERE CNo='{$CNo}');";
 	$result = @mysql_query ( $qry ) or die ( mysql_error() );
 	if ( $result && mysql_num_rows ( $result ) > 1 ) {
 		messagePush ( "You have already submitted feedback!" );
@@ -106,7 +108,7 @@ if ( isset ( $_POST['SubmitFeed'] ) ) {
 		$qry = "START TRANSACTION;";
 		$result = @mysql_query ( $qry ) or die ( mysql_error() );
 		while ( $i <= $insCount ) {
-			$insert_qry = "INSERT INTO feedback VALUES ({$crn}, {$i}, '{$value[$i]['exceeds']}', '{$value[$i]['meets']}', '{$value[$i]['progress']}', '{$value[$i]['below']}', '{$value[$i]['criteria']}')";
+			$insert_qry = "INSERT INTO feedback VALUES ({$crn}, '{$CNo}', {$i}, '{$value[$i]['exceeds']}', '{$value[$i]['meets']}', '{$value[$i]['progress']}', '{$value[$i]['below']}', '{$value[$i]['criteria']}')";
 			$result = @mysql_query ( $insert_qry );
 			if ( !$result ) {
 				messagePush ( "Oops something went wrong");

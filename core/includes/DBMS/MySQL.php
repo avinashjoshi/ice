@@ -76,11 +76,11 @@ $db_query = "CREATE TABLE `{$table}` (
 	`Address` blob,
 	`Sex` char(1),
 	`Salary` decimal(12,2),
-	`Email` varchar(50) NOT NULL,
+	`Email` varchar(50),
 	`OfficeLoc` varchar(20),
 	`Position`  varchar(30),
 	`Phone` varchar(10),
-	`DNo` int(6),
+	`DNo` int(6) NOT NULL,
 	PRIMARY KEY (`Ssn`),
 	FOREIGN KEY (`LoginId`) REFERENCES `users` (`LoginId`),
 	FOREIGN KEY (`DNo`) REFERENCES `department` (`Dnumber`)
@@ -113,7 +113,7 @@ $db_query = "CREATE TABLE `{$table}` (
 	`CName` varchar(50) NOT NULL,
 	`CDesc` varchar(225) NOT NULL,
 	`Credits` int (2),
-	`DeptNo` int (6),
+	`DeptNo` int (6) NOT NULL,
 	PRIMARY KEY (`CNo`),
 	FOREIGN KEY (`DeptNo`) REFERENCES `department` (`DNumber`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
@@ -160,13 +160,14 @@ messagePush( "Table `{$table}` created");
 $table = "feedback";
 $db_query = "CREATE TABLE `{$table}` (
 	`CRN` int(6) NOT NULL REFERENCES `section` (`CRN`),
+	`CNo` varchar(10) NOT NULL REFERENCES `course` (`CNo`),
 	`CLO_No` int (3) NOT NULL REFERENCES `clo` (`CLO_No`),
 	`Exceed` varchar (10) NOT NULL,
 	`Meet` varchar (10) NOT NULL,
 	`Progress` varchar (10) NOT NULL,
 	`Below` varchar (10) NOT NULL,
-	`Criteria` blob NOT NULL, -- varchar (255) NOT NULL,
-	PRIMARY KEY (`CRN`,`CLO_No`)
+	`Criteria` blob NOT NULL,
+	PRIMARY KEY (`CRN`,`CNo`,`CLO_No`)
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 if( !mysql_query( $db_query ) ){
 	messagePush( "Table could not be created<br />SQL: ".mysql_error() );
