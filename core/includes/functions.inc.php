@@ -233,14 +233,6 @@ function getInternalLinkUrl( $pLink,$text=null ) {
 // -- END
 
 // Database Management --
-if ($DBMS == 'MySQL') {
-	$DBMS = htmlspecialchars(strip_tags($DBMS));
-	$DBMS_errorFunc = 'mysql_error()';
-}
-else {
-	$DBMS = "No DBMS selected.";
-	$DBMS_errorFunc = '';
-}
 
 $DBMS_connError = '<div align="center">
 	<img src="'.WEB_PAGE_TO_ROOT.'core/theming/images/logo.png">
@@ -296,9 +288,7 @@ function databaseCheck() {
  */
 function databaseConnect() {
 	global $_DBC;
-	global $DBMS;
 	global $DBMS_connError;
-	if ($DBMS == 'MySQL') {
 		/*
 		 * mysql_connect() connects to Database using host, username & password as arguments
 		 * mysql_select_db() selects the database with the above connection
@@ -309,7 +299,6 @@ function databaseConnect() {
 				echo "<title>Oops!</title>";
 				die( $DBMS_connError );
 			}
-	}
 	databaseCheck();
 }
 // -- END

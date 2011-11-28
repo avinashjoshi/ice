@@ -12,14 +12,6 @@
  */
 
 /*
- * DBM that will be used. MySQL is default
- * I have added this line to fix a few database
- * functionalities in functions.inc.php
- */
-$DBMS = 'MySQL';
-$installComplete = false;
-
-/*
  * The Universitiy logo must be in core/theming/images
  * You can comment the line containing $univLogoImg
  * if you do not want a university logo

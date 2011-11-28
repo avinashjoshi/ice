@@ -256,7 +256,7 @@ messagePush( "Inserted values into table `{$table}`");
 
 $table = "clo";
 $db_query = "INSERT INTO `{$table}` VALUES ";
-$db_query .= file_get_contents(WEB_PAGE_TO_ROOT.'core/includes/DBMS/CLO.php', FILE_USE_INCLUDE_PATH);
+$db_query .= file_get_contents(WEB_PAGE_TO_ROOT.'core/includes/CLO.php', FILE_USE_INCLUDE_PATH);
 $db_query.=";";
 if( !mysql_query( $db_query ) ){
 	messagePush( "Table could not be created<br />SQL: ".mysql_error() );

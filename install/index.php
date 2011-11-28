@@ -19,15 +19,7 @@ $page[ 'title' ] .= $page[ 'title_separator' ].'Install';
 $page[ 'page_id' ] = 'install';
 
 if( isset( $_POST[ 'create_db' ] ) ) {
-
-	if ($DBMS == 'MySQL') {
-		include_once WEB_PAGE_TO_ROOT.'core/includes/DBMS/MySQL.php';
-	}
-	else {
-		messagePush( "ERROR: Invalid database selected. Please review the config file syntax." );
-		pageReload();
-	}
-
+	include_once WEB_PAGE_TO_ROOT.'core/includes/MySQL.php';
 }
 
 $page[ 'body' ] .= "
@@ -38,7 +30,7 @@ $page[ 'body' ] .= "
 
 	<p><i><b>Note: If the database already exists, it will be cleared and the data will be reset.</b></i></p>
 	<br />
-	Backend Database: <b>".$DBMS."</b>
+	Backend Database: <b>MySQL</b>
 	<br /><br /><br />
 	<div class=\"join\">
 	<form action=\"\" method=\"post\">
@@ -47,16 +39,6 @@ $page[ 'body' ] .= "
 	</div>
 	</div>
 	";
-
-if ( $installComplete == true ) {
-	$page ['below_msg' ] = "
-	<div class=\"join\">
-	<form action=\"\" method=\"post\">
-	<input name=\"create_db\" type=\"submit\" value=\"Install Now\">
-	</form>
-	</div>
-		";
-}
 
 $right = "";
 

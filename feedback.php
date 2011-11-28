@@ -128,7 +128,7 @@ if ( isset ( $_POST['SubmitFeed'] ) ) {
 		}
 		$qry = "COMMIT;";
 		$result = @mysql_query ( $qry ) or die ( mysql_error() );
-		messagePush ( "Success" );
+		messagePush ( "Feedback Submitted" );
 		redirectPage ( 'feedback.php' );
 	}
 }

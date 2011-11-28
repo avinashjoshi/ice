@@ -21,15 +21,7 @@ $page[ 'title' ] .= $page[ 'title_separator' ].'Setup';
 $page[ 'page_id' ] = 'setup';
 
 if( isset( $_POST[ 'create_db' ] ) ) {
-
-	if ($DBMS == 'MySQL') {
-		include_once WEB_PAGE_TO_ROOT.'core/includes/DBMS/MySQL.php';
-	}
-	else {
-		messagePush( "ERROR: Invalid database selected. Please review the config file syntax." );
-		pageReload();
-	}
-
+	include_once WEB_PAGE_TO_ROOT.'core/includes/MySQL.php';
 }
 
 $page[ 'body' ] .= "
@@ -42,7 +34,7 @@ $page[ 'body' ] .= "
 
 	<br />
 
-	Backend Database: <b>".$DBMS."</b>
+	Backend Database: <b>MySQL</b>
 
 	<br /><br /><br />
 

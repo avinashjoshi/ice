@@ -1,23 +1,23 @@
-##########################################################
-###                                                    ###
-###   iiii         CCCCCCCCCCCCCEEEEEEEEEEEEEEEEEEEEEE ###
-###  i::::i     CCC::::::::::::CE::::::::::::::::::::E ###
-###   iiii    CC:::::::::::::::CE::::::::::::::::::::E ###
-###          C:::::CCCCCCCC::::CEE::::::EEEEEEEEE::::E ###
-### iiiiiii C:::::C       CCCCCC  E:::::E       EEEEEE ###
-### i:::::iC:::::C                E:::::E              ###
-###  i::::iC:::::C                E::::::EEEEEEEEEE    ###
-###  i::::iC:::::C                E:::::::::::::::E    ###
-###  i::::iC:::::C                E:::::::::::::::E    ###
-###  i::::iC:::::C                E::::::EEEEEEEEEE    ###
-###  i::::iC:::::C                E:::::E              ###
-###  i::::i C:::::C       CCCCCC  E:::::E       EEEEEE ###
-### i::::::i C:::::CCCCCCCC::::CEE::::::EEEEEEEE:::::E ###
-### i::::::i  CC:::::::::::::::CE::::::::::::::::::::E ###
-### i::::::i    CCC::::::::::::CE::::::::::::::::::::E ###
-### iiiiiiii       CCCCCCCCCCCCCEEEEEEEEEEEEEEEEEEEEEE ###
-###                                                    ### 
-##########################################################
+############################################################
+###                                                      ###
+###   iiii          CCCCCCCCCCCCC EEEEEEEEEEEEEEEEEEEEEE ###
+###  i::::i      CCC::::::::::::C E::::::::::::::::::::E ###
+###   iiii     CC:::::::::::::::C E::::::::::::::::::::E ###
+###           C:::::CCCCCCCC::::C EE::::::EEEEEEEEE::::E ###
+### iiiiiii  C:::::C       CCCCCC   E:::::E       EEEEEE ###
+### i:::::i C:::::C                 E:::::E              ###
+###  i::::i C:::::C                 E::::::EEEEEEEEEE    ###
+###  i::::i C:::::C                 E:::::::::::::::E    ###
+###  i::::i C:::::C                 E:::::::::::::::E    ###
+###  i::::i C:::::C                 E::::::EEEEEEEEEE    ###
+###  i::::i C:::::C                 E:::::E              ###
+###  i::::i  C:::::C       CCCCCC   E:::::E       EEEEEE ###
+### i::::::i  C:::::CCCCCCCC::::C EE::::::EEEEEEEE:::::E ###
+### i::::::i   CC:::::::::::::::C E::::::::::::::::::::E ###
+### i::::::i     CCC::::::::::::C E::::::::::::::::::::E ###
+### iiiiiiii        CCCCCCCCCCCCC EEEEEEEEEEEEEEEEEEEEEE ###
+###                                                      ### 
+############################################################
 
 Interactive Course Evaluation (iCE) makes life of a course instructor easier
 by providing a web interface to provide feedback regarding their course.
@@ -36,7 +36,46 @@ Eventually iCE may become a free software.
 ##############
 # Installing #
 ##############
+Software requirements
+-----------------------
+o You will need Apache/Http server, MySQL & PHP (including modules for PHP and MySQL)
+o Installing this on
+	- Ubuntu: Run `sudo apt-get install lamp-server^` on terminal
+	- Windows: Download and install WAMP
+	- Mac OS X: Download and install MAMP
+	- Note that XAMPP is available for any distribution
 
+Moving files to the right directory
+-------------------------------------
+o Move ice folder to the www directory
+o The url to iCE will look something like http://localhost/ice
+
+Database Configuration
+------------------------
+o Open config/config.inc.php in your favorite text editor. I prefer vim
+o There are many variables you can change
+	- $univLogoImg is used for the University Logo which is displayed in the login page. This can be found in 'core/theming/images'
+	- $_DBC is an array used to store Database variables
+		* db_server is the database server usually "localhost"
+		* db_database is the database to be used
+		* db_user is database username
+		* db_password is database password
+
+Installing iCE
+---------------
+o Once the database details is configured, Go to http://localhost/ice on your favorite browser.
+o You will be automatically redirected to the installation page since database does not exist
+o Click on 'Install Now' and the database will be installed
+o Note: Remember to delete 'install' directory!
+o Once installation is done, Go to http://localhost/ice and you will be prompted with the login page
+
+Defaults
+---------
+o I have assumed this to be UTD system and uploaded some default values into the database during installation.
+o Note that password for all users is 'toor' by default
+o Admin Login username: root
+o Some faculty logins: gupta (Department Head), rbk, chandra, lkhan
+o Some student login: axj107420
 
 ###########
 # Contact #

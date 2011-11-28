@@ -59,12 +59,7 @@ function htmlEcho( $pPage ) {
 	$adminLink = "";
 	//Primary Menu
 	$pmenuBlocks = array();
-	$pmenuBlocks[] = array( 'id' => 'home', 'name' => 'Home', 'url' => '.' );
-	if ( isAdmin()) {
-		$adminLink = WEB_PAGE_TO_ROOT . 'admin';
-		$adminLink = getInternalLinkUrl( $adminLink, "Admin");
-		$pmenuBlocks[] = array( 'id' => 'admin', 'name' => 'Admin', 'url' => 'admin' );
-	}
+	$pmenuBlocks[] = array( 'id' => 'home', 'name' => 'Home', 'url' => 'admin/index.php' );
 	$pmenuBlocks[] = array( 'id' => 'about', 'name' => 'About', 'url' => 'about.php' );
 	$pmenuBlocks[] = array( 'id' => 'logout', 'name' => 'Logout', 'url' => 'logout.php' );
 
