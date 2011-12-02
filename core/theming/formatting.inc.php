@@ -33,6 +33,7 @@ function htmlEcho( $pPage ) {
 	if ( isAdmin()) {
 		$menuBlocks['admin'] = array();
 		$menuBlocks['admin'][] = array( 'id' => 'setup', 'name' => 'Setup', 'url' => 'admin/setup.php' );
+		$menuBlocks['admin'][] = array( 'id' => 'chngpwd', 'name' => 'Change Password', 'url' => 'admin/password.php' );
 		$menuBlocks['admin'][] = array( 'id' => 'dept', 'name' => 'Department', 'url' => 'admin/department.php' );
 		$menuBlocks['admin'][] = array( 'id' => 'adddept', 'name' => 'Add Department', 'url' => 'admin/department.php?mode=add' );
 		$menuBlocks['admin'][] = array( 'id' => 'faculty', 'name' => 'Faculty List', 'url' => 'admin/faculty.php' );

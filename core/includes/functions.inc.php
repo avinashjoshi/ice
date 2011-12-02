@@ -34,7 +34,7 @@ if (!isset ($html)){
 
 // iCE version
 function getVersion () {
-	return '0.9';
+	return '0.9b';
 }
 
 //Software name
@@ -55,6 +55,10 @@ function &sessionGrab () {
 	return $_SESSION['iCE'];
 }
 
+/*
+ * This function redirects users to the correct page
+ * based on login & pActions information
+ */
 function pageStartup ($pActions) {
 	if (in_array ('authenticated', $pActions)) {
 		if (!isLoggedIn ()) {
@@ -138,6 +142,9 @@ function currentUser() {
 	return ( isset( $theSession['username']) ? $theSession['username'] : '') ;
 }
 
+/*
+ * Used for getQuote function
+ */
 function currentName() {
 	$theSession =& sessionGrab();
 	$database = "";
@@ -177,13 +184,6 @@ function getQuote() {
 	}
 	$quote = "{$message} <font color=\"#99cc33\">{$user}</font> !";
 	return $quote;
-}
-
-function getQuoteOld() {
-	$link = WEB_PAGE_TO_ROOT . 'about.php';
-	$link = "<a href=\"$link\" style=\"color: #99cc33;\">Read More</a>";
-	$quote = "<font color=\"#99cc33\"><i>".getSoftwareName()."</i></font> makes life of a course instructor easier by providing a web interface to provide feedback regarding their course. ({$link})";
-	return ($quote);
 }
 
 // Start message functions --
@@ -250,14 +250,13 @@ $DBMS_tablesError = '<div align="center">
 
 /*
  * I have this to check the sanity of current table.
- * Not fully implemented. Can be maede better.
- * Will add later
+ * May be this can be made better!
  */
 function databaseCheck() {
 	global $_DBC;
 	global $DBMS_tablesError;
 	$flag = true;
-	$listTables = array('users', 'users');
+	$listTables = array('users', 'faculty', 'clo', 'department', 'course', 'feedback', 'section');
 
 	$qry = "SHOW TABLES FROM {$_DBC['db_database']}";
 	$result = @mysql_query($qry) or die('<pre>' . mysql_error() . '</pre>' );

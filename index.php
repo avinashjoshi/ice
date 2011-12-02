@@ -21,7 +21,7 @@ databaseConnect();
 $role = getRole();
 
 if ( $role == "admin" ) {
-	redirectPage ( WEB_PAGE_TO_ROOT.'admin/setup.php' );
+	redirectPage ( WEB_PAGE_TO_ROOT.'admin/index.php' );
 }
 
 if ( $role == "faculty" ) {
