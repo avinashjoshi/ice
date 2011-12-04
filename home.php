@@ -39,7 +39,7 @@ if( $result && mysql_num_rows( $result ) >= 1 ) {
 		$htmlMsg .= '<td>' . $row['CNo'] . '</td>';
 		$htmlMsg .= '<td>' . $row['SecNo'] . '</td>';
 		$htmlMsg .= '<td>' . $c_row['CName'] . '</td>';
-		$htmlMsg .= '<td>' . $row['SemYear'] . ' ' . $row['SemTime'] . '</td>';
+		$htmlMsg .= '<td>' . $row['SemYear'] . '</td>';
 		$htmlMsg .= '</tr>';
 	}
 	$htmlMsg .= "</Table>";
@@ -67,7 +67,7 @@ if ( isDeptHead() ) {
 			$htmlMsg .= '<td>' . $row['CNo'] . '</td>';
 			$htmlMsg .= '<td>' . $row['SecNo'] . '</td>';
 			$htmlMsg .= '<td>' . $c_row['CName'] . '</td>';
-			$htmlMsg .= '<td>' . $row['SemYear'] . ' ' . $row['SemTime'] . '</td>';
+			$htmlMsg .= '<td>' . $row['SemYear'] . '</td>';
 			$htmlMsg .= '<td>' . $row['FName'] . ' ' . $row['LName'] . '</td>';
 			$htmlMsg .= '</tr>';
 		}

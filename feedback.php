@@ -18,9 +18,11 @@ pageStartup( array( 'authenticated', 'faculty' ) );
 
 $mode = isset ( $_GET['mode'] ) ? $_GET['mode'] : "";
 $crn = isset ( $_GET['crn'] ) ? $_GET['crn'] : "";
+$mode = stopSQLi( $mode );
 if ( isset ( $_POST ['crn'] ) ) {
 	$crn = $_POST['crn'];
 }
+$crn = stopSQLi( $crn );
 
 if ( $mode != "" && $mode != "view" && $mode != "add" ) {
 	messagePush ( "Invalid mode" );
@@ -58,6 +60,7 @@ if ( $mode != "" || $crn != "" ) {
 	$flag = false;
 	$totalstud = isset ( $_POST['totalstud'] ) ? $_POST['totalstud'] : "";
 	$comments = isset ( $_POST['comments'] ) ? $_POST['comments'] : "";
+	$metric = isset ( $_POST['metric'] ) ? $_POST['metric'] : "";
 	$insCount = $count;
 	$i = $count;
 	while ( $count ) {
@@ -75,10 +78,18 @@ if ( $mode != "" || $crn != "" ) {
 		$flag = true;
 	if ( $flag == false ) {
 		while ( $i ) {
-			if ( $totalstud != ( $value[$i]['below'] + $value[$i]['progress'] + $value[$i]['meets'] + $value[$i]['exceeds'] ) ) {
-				$flag = true;
-				messagePush ( "Sum does not match total students");
-				break;
+			if ( $metric == "N" ) {
+				if ( $totalstud != ( $value[$i]['below'] + $value[$i]['progress'] + $value[$i]['meets'] + $value[$i]['exceeds'] ) ) {
+					$flag = true;
+					messagePush ( "Sum does not match total students in row {$i}");
+					break;
+				}
+			} else {
+				if ( 100 != ( $value[$i]['below'] + $value[$i]['progress'] + $value[$i]['meets'] + $value[$i]['exceeds'] ) ) {
+					$flag = true;
+					messagePush ( "Total does not match percentage to 100% in row {$i}");
+					break;
+				}
 			}
 			$i = $i - 1;
 		}
@@ -108,7 +119,7 @@ if ( isset ( $_POST['SubmitFeed'] ) ) {
 		$qry = "START TRANSACTION;";
 		$result = @mysql_query ( $qry ) or die ( mysql_error() );
 		while ( $i <= $insCount ) {
-			$insert_qry = "INSERT INTO feedback VALUES ({$crn}, '{$CNo}', {$i}, '{$value[$i]['exceeds']}', '{$value[$i]['meets']}', '{$value[$i]['progress']}', '{$value[$i]['below']}', '{$value[$i]['criteria']}')";
+			$insert_qry = "INSERT INTO feedback VALUES ({$crn}, '{$CNo}', {$i}, '{$value[$i]['exceeds']}', '{$value[$i]['meets']}', '{$value[$i]['progress']}', '{$value[$i]['below']}', '{$value[$i]['criteria']}', '{$metric}')";
 			$result = @mysql_query ( $insert_qry );
 			if ( !$result ) {
 				messagePush ( "Oops something went wrong");
@@ -157,7 +168,7 @@ if ( mysql_num_rows ( $result ) < 1 ) {
 			$htmlMsg .= '<td>' . $row['CNo'] . '</td>';
 			$htmlMsg .= '<td>' . $row['SecNo'] . '</td>';
 			$htmlMsg .= '<td>' . $c_row['CName'] . '</td>';
-			$htmlMsg .= '<td>' . $row['SemYear'] . ' ' . $row['SemTime'] . '</td>';
+			$htmlMsg .= '<td>' . $row['SemYear'] . '</td>';
 			$htmlMsg .= '<td align="center" width="30"><a href="'. $link .'&mode=view"><img width="20px" src="'. $iconDir .'view.png" title="View Feedback" alt="View CLO\'s"/></a></td>';
 			$htmlMsg .= '<td align="center" width="30"><a href="'. $link .'&mode=add"><img width="20px" src="'. $iconDir .'add.png" title="Submit Feedback" alt="Add / Edit CLO\'s"/></a></td>';
 			$htmlMsg .= '</tr>';
@@ -199,16 +210,20 @@ if ( mysql_num_rows ( $result ) < 1 ) {
 		$htmlMsg .= '</table>';
 		$htmlMsg .= '<br /><br />';
 		$htmlMsg .= '<table style="width: 100%" id="mytable" cellspacing="0" summary="Comments" align="center">';
-		$htmlMsg .= '<tr><th rowspan="2" width=10><center>Sl. No.</center></th><th rowspan = "2" width=100><center>CLO</center></th><th colspan="4"><center>Number of Students</center></th><th rowspan="2"><center>Material Used</center></th></tr>';
+		$htmlMsg .= '<tr><th rowspan="2" width=10><center>Sl. No.</center></th><th rowspan = "2" width=100><center>CLO</center></th><th colspan="4"><center>Students</center></th><th rowspan="2"><center>Material Used</center></th></tr>';
 		$htmlMsg .= '<tr><th width="65"><center>Below Exp</center></th><th width="65"><center>Progress to Criteria</center></th><th width="65"><center>Meets Criteria</center></th><th width="65"><center>Exceeds Criteria</center></th></tr>';
 		while ( $row = mysql_fetch_assoc ( $result ) ) {
+			if ( $row['Metric'] == "P" )
+				$dispMetric = "%";
+			else
+				$dispMetric = "";
 			$htmlMsg .= '<tr>';
 			$htmlMsg .= '<td><center>'. $row['CLO_No'] .'</center></td>';
 			$htmlMsg .= '<td>'. $clo[$row['CLO_No']] .'</td>';
-			$htmlMsg .= '<td><center>'. $row['Below'] .'</center></td>';
-			$htmlMsg .= '<td><center>'. $row['Progress'] .'</center></td>';
-			$htmlMsg .= '<td><center>'. $row['Meet'] .'</center></td>';
-			$htmlMsg .= '<td><center>'. $row['Exceed'] .'</center></td>';
+			$htmlMsg .= '<td><center>'. $row['Below'] . $dispMetric .'</center></td>';
+			$htmlMsg .= '<td><center>'. $row['Progress'] . $dispMetric .'</center></td>';
+			$htmlMsg .= '<td><center>'. $row['Meet'] . $dispMetric .'</center></td>';
+			$htmlMsg .= '<td><center>'. $row['Exceed'] . $dispMetric .'</center></td>';
 			$htmlMsg .= '<td><center>'. $row['Criteria'] .'</center></td>';
 			$htmlMsg .= '</tr>';
 		}
@@ -230,17 +245,30 @@ if ( mysql_num_rows ( $result ) < 1 ) {
 	$htmlMsg .= "<h3>{$CNo} - {$CName} - {$crn}</h3>";
 	$htmlMsg .= "<form action=\"{$link}\" method=\"post\" name=\"form\">";
 	$htmlMsg .= "<input type=\"hidden\" name=\"crn\" value=\"{$crn}\" />";
-	$htmlMsg .= '<table style="width: 260px" id="mytable" cellspacing="0" summary="Comments" align="center">';
+	$htmlMsg .= '<table style="width: 100%" id="mytable" cellspacing="0" summary="Comments" align="center">';
 	$htmlMsg .= '<tr>';
 	$htmlMsg .= '<td style="border-top: 1px solid #C1DAD7;" width=180>Total Number of students:</td>';
 	$htmlMsg .= '<td style="padding-top: 15px; border-top: 1px solid #C1DAD7;" width="50"><input type="text" class="inputBox" style="width: 25px;" maxlength="3" value="'. $totalstud .'" name="totalstud" /></td>';
+	$htmlMsg .= '<td style="border-bottom: 0px; padding-left: 100px;"></td>';
+	$htmlMsg .= '<td style="border-top: 1px solid #C1DAD7;" width=80>Metric:</td>';
+	$htmlMsg .= '<td style="padding-top: 15px; border-top: 1px solid #C1DAD7;" width="50">';
+	$htmlMsg .= '<select name="metric">';
+	$htmlMsg .= '<option value="N"';
+	if ( $metric == "N" || $metric == "" )
+		$htmlMsg .= 'SELECTED';
+	$htmlMsg .= '>Total Students</option>';
+	$htmlMsg .= '<option value="P"';
+	if ( $metric == "P" )
+		$htmlMsg .= 'SELECTED';
+	$htmlMsg .= '>Percentage</option></select>';
+	$htmlMsg .= '</td>';
 	$htmlMsg .= '</tr>';
 	$htmlMsg .= '</table>';
 	$htmlMsg .= '<br /><br />';
 	$qry = "SELECT * FROM clo WHERE CNo='{$CNo}';";
 	$result = @mysql_query ( $qry ) or die ( mysql_error() );
 	$htmlMsg .= '<table style="width: 100%" id="mytable" cellspacing="0" summary="Comments" align="center">';
-	$htmlMsg .= '<tr><th rowspan="2" width=10><center>Sl. No.</center></th><th rowspan = "2" width=100><center>CLO</center></th><th colspan="4"><center>Number of Students</center></th><th rowspan="2"><center>Material Used</center></th></tr>';
+	$htmlMsg .= '<tr><th rowspan="2" width=10><center>Sl. No.</center></th><th rowspan = "2" width=100><center>CLO</center></th><th colspan="4"><center>Number of Students / Percentage</center></th><th rowspan="2"><center>Material Used</center></th></tr>';
 	$htmlMsg .= '<tr><th width="65"><center>Below Exp</center></th><th width="65"><center>Progress to Criteria</center></th><th width="65"><center>Meets Criteria</center></th><th width="65"><center>Exceeds Criteria</center></th></tr>';
 	while ( $row = mysql_fetch_assoc ( $result ) ) {
 		$htmlMsg .= '<tr>';

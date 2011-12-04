@@ -12,7 +12,7 @@
  */
 
 define( 'WEB_PAGE_TO_ROOT', '' );
-require_once WEB_PAGE_TO_ROOT.'core/includes/functions.inc.php';
+require_once WEB_PAGE_TO_ROOT . 'core/includes/functions.inc.php';
 pageStartup( array( 'notauthenticated' ) );
 global $univLogoImg;
 
@@ -32,13 +32,12 @@ if( isset( $_POST[ 'Login' ] ) ) {
 		messagePush ( "You must enter a value for password" );
 		redirectPage ( 'login.php' );
 	}
-	stopSQLi( $pass );
-	$pass = md5( $pass );
-	stopSQLi( $pass );
+	$pass = stopSQLi ( $pass );
+	$pass = md5 ( $pass );
 
 	$qry = "SELECT * FROM `users` WHERE LoginId='$user' AND password='$pass';";
 
-	$result = @mysql_query($qry) or die('<pre>' . mysql_error() . '</pre>' );
+	$result = @mysql_query ( $qry ) or die ( mysql_error() );
 
 	if( $result && mysql_num_rows( $result ) == 1 ) {	// Login Successful...
 		$row = mysql_fetch_assoc($result);
@@ -56,18 +55,9 @@ if( isset( $_POST[ 'Login' ] ) ) {
 			if ( mysql_num_rows ( $h_result ) >= 1 ) {
 				setDeptHead();
 			}
-			/*
-			$h_qry = "SELECT * FROM faculty WHERE LoginId = '{$user}'";
-			$h_result = @mysql_query ( $h_qry ) or die ( mysql_error() );
-			$h_row = mysql_fetch_assoc ( $h_result );
-			if ( $h_row['Position'] == "Department Head" ) {
-				setDeptHead();
-			}
-			 */
 		}
 		redirectPage( 'index.php' );
 	}
-
 	// Login failed
 	messagePush( "Login failed" );
 	redirectPage( 'login.php' );
@@ -106,5 +96,4 @@ $page[ 'body' ] .= "
 $right = "";
 
 noLoginHtmlEcho( $page, $right );
-
 ?>

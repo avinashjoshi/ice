@@ -23,7 +23,8 @@ pageStartup( array( 'authenticated', 'faculty' ) );
 
 $course = isset ( $_GET['course'] ) ? $_GET['course'] : "";
 $mode = isset ( $_GET['mode'] ) ? $_GET['mode'] : "";
-
+$course = stopSQLi ($course);
+$mode = stopSQLi ($mode);
 
 $page = pageNewGrab();
 $page[ 'title' ] .= $page[ 'title_separator' ].'Course List & CLO';
@@ -120,7 +121,7 @@ if ( $mode == "add" ) {
 		$htmlMsg .= '</tr>';
 		$htmlMsg .= '<tr>';
 		$htmlMsg .= '<th class="spec" scope="col"><center>Course Name</center></th>';
-		$htmlMsg .= '<td><input type="text" class="inputBox" maxlength="6" name="cname" value="'. $cname .'" /></td>';
+		$htmlMsg .= '<td><input type="text" class="inputBox" maxlength="50" name="cname" value="'. $cname .'" /></td>';
 		$htmlMsg .= '</tr>';
 		$htmlMsg .= '<tr>';
 		$htmlMsg .= '<th class="spec" scope="row"><center>Course Description</center></th>';
@@ -149,6 +150,7 @@ if ( $mode == "add" ) {
 		$htmlMsg .= "</form>";
 	} else {
 		$number = isset ( $_GET['row'] ) ? $_GET['row'] : "";
+		$number = stopSQLi ($number);
 		$page[ 'page_id' ] = 'courseclo';
 		$heading = "Adding CLO for {$course}";
 		$link = "";
@@ -167,10 +169,13 @@ if ( $mode == "add" ) {
 					$flag = false;
 					$count = isset ( $_POST['count'] ) ? $_POST['count'] : "";
 					$total = isset ( $_POST['total'] ) ? $_POST['total'] : "";
+					$count = stopSQLi ($count);
+					$total = stopSQLi ($total);
 					$i = $count;
 					$value = array();
 					while ( $i <= $total ) {
 						$value[$i] = isset ( $_POST[$i] ) ? $_POST[$i] : "";
+						$value[$i] = stopSQLi ($value[$i]);
 						if ( $value[$i] == "" )
 							$flag = true;
 						$i = $i + 1;
@@ -200,7 +205,7 @@ if ( $mode == "add" ) {
 						redirectPage ( "course.php?course={$course}&mode=view" );
 					}
 				}
-				$qry = "SELECT * FROM clo WHERE CNo='{$course}';";
+				$qry = "SELECT * FROM course WHERE CNo='{$course}';";
 				$result = @mysql_query ( $qry );
 				if ( $result && mysql_num_rows ( $result ) == 0 ) {
 					messagePush ( "Course {$course} does not exist!" );
