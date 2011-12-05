@@ -15,7 +15,7 @@ define( 'WEB_PAGE_TO_ROOT', '../' );
 require_once WEB_PAGE_TO_ROOT.'core/includes/functions.inc.php';
 
 $page = pageNewGrab();
-$page[ 'title' ] .= $page[ 'title_separator' ].'Install';
+$page[ 'title' ] .= $page[ 'title_separator' ].'OneClick Install';
 $page[ 'page_id' ] = 'install';
 
 if( isset( $_POST[ 'create_db' ] ) ) {
@@ -24,7 +24,7 @@ if( isset( $_POST[ 'create_db' ] ) ) {
 
 $page[ 'body' ] .= "
 	<div class=\"body_padded\">
-	<h1>Install <i>". getSoftwareName() ."</i> <img src=\"".WEB_PAGE_TO_ROOT."core/theming/images/spanner.png\"></h1>
+	<h1>OneClick Install <i>". getSoftwareName() ."</i> <img src=\"".WEB_PAGE_TO_ROOT."core/theming/images/spanner.png\"></h1>
 
 	Click on the 'Install Now' button below to create or reset your database. If you get an error make sure you have the correct user credentials in /config/config.inc.php
 

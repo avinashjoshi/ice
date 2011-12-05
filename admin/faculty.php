@@ -220,10 +220,9 @@ if ( $mode == "add" ) {
 	$result = @mysql_query ( $qry ) or die ( mysql_error() );
 	if ( $result && mysql_num_rows ( $result ) >= 1 ) {
 		$courseList .= '<table style="width: 100%" id="mytable" cellspacing="0" summary="Comments" align="center">';
-		$courseList .= '<tr><th align="center">Ssn</th><th>Name</th><th><center>Login</center></th><th>Office</th><th>Department</th><th>Position</th></tr>';
+		$courseList .= '<tr><th>Name</th><th><center>Login</center></th><th>Office</th><th>Department</th><th>Position</th></tr>';
 		while ( $row = mysql_fetch_assoc ( $result ) ) {
 			$courseList .= '<tr>';
-			$courseList .= '<td>' . $row['Ssn'] . '</td>';
 			$courseList .= '<td>' . $row['FName'] . ' '. $row['LName'] .'</td>';
 			$courseList .= '<td>' . $row['LoginId'] . '</td>';
 			$courseList .= '<td>' . $row['OfficeLoc'] . '</td>';

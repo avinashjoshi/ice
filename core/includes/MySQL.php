@@ -130,11 +130,12 @@ $db_query = "CREATE TABLE `{$table}` (
 	`SecNo` varchar(10) NOT NULL,
 	`SecName` varchar(10),
 	`SemYear` varchar(20),
-	`InstSsn` varchar(10) NOT NULL REFERENCES `faculty` (`Ssn`),
+	`InstSsn` varchar(10) NOT NULL,
 	`Comment` varchar(255),
 	`totalstud` int(5) DEFAULT 0,
-	PRIMARY KEY (`CRN`),
-	FOREIGN KEY (`CNo`) REFERENCES `course` (`CNo`)
+	FOREIGN KEY (`InstSsn`) REFERENCES `faculty` (`Ssn`),
+	FOREIGN KEY (`CNo`) REFERENCES `course` (`CNo`),
+	PRIMARY KEY (`CRN`)
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 if( !mysql_query( $db_query ) ){
 	messagePush( "Table could not be created<br />SQL: ".mysql_error() );
@@ -158,15 +159,16 @@ messagePush( "Table `{$table}` created");
 
 $table = "feedback";
 $db_query = "CREATE TABLE `{$table}` (
-	`CRN` int(6) NOT NULL REFERENCES `section` (`CRN`),
-	`CNo` varchar(10) NOT NULL REFERENCES `course` (`CNo`),
-	`CLO_No` int (3) NOT NULL REFERENCES `clo` (`CLO_No`),
+	`CRN` int(6) NOT NULL,
+	`CNo` varchar(10) NOT NULL,
+	`CLO_No` int (3) NOT NULL,
 	`Exceed` varchar (10) NOT NULL,
 	`Meet` varchar (10) NOT NULL,
 	`Progress` varchar (10) NOT NULL,
 	`Below` varchar (10) NOT NULL,
 	`Criteria` blob NOT NULL,
-	`Metric` char (1) NOT NULL DEFAULT 'N',
+	FOREIGN KEY (`CRN`) REFERENCES `section` (`CRN`),
+	FOREIGN KEY (`CNo`, `CLO_No`) REFERENCES `clo` (`CNo`, `CLO_No`),
 	PRIMARY KEY (`CRN`,`CNo`,`CLO_No`)
 	) ENGINE=InnoDB DEFAULT CHARSET=latin1;";
 if( !mysql_query( $db_query ) ){

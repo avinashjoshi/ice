@@ -24,16 +24,20 @@ if ( isset ( $_POST ['crn'] ) ) {
 }
 $crn = stopSQLi( $crn );
 
-if ( $mode != "" && $mode != "view" && $mode != "add" ) {
+if ( $mode != "delete" && $mode != "" && $mode != "view" && $mode != "add" ) {
 	messagePush ( "Invalid mode" );
 	redirectPage ( WEB_PAGE_TO_ROOT.'index.php' );
 }
+
+if ( $mode == "" && $crn != "" )
+	redirectPage ( "feedback.php?crn={$crn}&mode=view" );
 
 $page = pageNewGrab();
 $page[ 'title' ] .= $page[ 'title_separator' ].'Feedback';
 $page[ 'page_id' ] = 'feedback';
 databaseConnect();
 
+$loginId = currentUser();
 if ( $mode != "" || $crn != "" ) {
 	$qry =  "SELECT * FROM section, course where CRN = '{$crn}' AND course.CNo=section.CNo;";
 	$result = @mysql_query ( $qry ) or die ( mysql_error() );
@@ -60,7 +64,6 @@ if ( $mode != "" || $crn != "" ) {
 	$flag = false;
 	$totalstud = isset ( $_POST['totalstud'] ) ? $_POST['totalstud'] : "";
 	$comments = isset ( $_POST['comments'] ) ? $_POST['comments'] : "";
-	$metric = isset ( $_POST['metric'] ) ? $_POST['metric'] : "";
 	$insCount = $count;
 	$i = $count;
 	while ( $count ) {
@@ -78,18 +81,10 @@ if ( $mode != "" || $crn != "" ) {
 		$flag = true;
 	if ( $flag == false ) {
 		while ( $i ) {
-			if ( $metric == "N" ) {
-				if ( $totalstud != ( $value[$i]['below'] + $value[$i]['progress'] + $value[$i]['meets'] + $value[$i]['exceeds'] ) ) {
-					$flag = true;
-					messagePush ( "Sum does not match total students in row {$i}");
-					break;
-				}
-			} else {
-				if ( 100 != ( $value[$i]['below'] + $value[$i]['progress'] + $value[$i]['meets'] + $value[$i]['exceeds'] ) ) {
-					$flag = true;
-					messagePush ( "Total does not match percentage to 100% in row {$i}");
-					break;
-				}
+			if ( 100 != ( $value[$i]['below'] + $value[$i]['progress'] + $value[$i]['meets'] + $value[$i]['exceeds'] ) ) {
+				$flag = true;
+				messagePush ( "Total percentage must add to 100% in row {$i}");
+				break;
 			}
 			$i = $i - 1;
 		}
@@ -97,6 +92,28 @@ if ( $mode != "" || $crn != "" ) {
 }
 
 $link = "feedback.php?crn={$crn}";
+
+if ( $mode == "delete" || $mode == "add" || (!isDeptHead() && $mode=="view") ) {
+	$qry = "SELECT * FROM section WHERE InstSsn = (SELECT Ssn FROM faculty WHERE LoginId='{$loginId}')";
+	$result = @mysql_query ( $qry );
+	$list = array();
+	$i = 0;
+	while ( $result && $row = mysql_fetch_assoc ( $result ) ) {
+		$list[$i] = $row['CRN'];
+		$i = $i + 1;
+	}
+	$what = "";
+	if ( $mode == "add" )
+		$what = "submit";
+	if ( $mode == "delete" )
+		$what = "delete";
+	if ( $what == "view" )
+		$what = "view";
+	if ( !in_array ( $crn, $list )) {
+		messagePush ( "You are not allowed to {$what} feedback!" );
+		redirectPage ( "feedback.php" );
+	}
+}
 
 if ( isset ( $_POST['SubmitFeed'] ) || $mode == "add" ) {
 	//$qry = "SELECT * FROM feedback WHERE CRN='{$crn}' AND CLO_No IN (
@@ -119,7 +136,7 @@ if ( isset ( $_POST['SubmitFeed'] ) ) {
 		$qry = "START TRANSACTION;";
 		$result = @mysql_query ( $qry ) or die ( mysql_error() );
 		while ( $i <= $insCount ) {
-			$insert_qry = "INSERT INTO feedback VALUES ({$crn}, '{$CNo}', {$i}, '{$value[$i]['exceeds']}', '{$value[$i]['meets']}', '{$value[$i]['progress']}', '{$value[$i]['below']}', '{$value[$i]['criteria']}', '{$metric}')";
+			$insert_qry = "INSERT INTO feedback VALUES ({$crn}, '{$CNo}', {$i}, '{$value[$i]['exceeds']}', '{$value[$i]['meets']}', '{$value[$i]['progress']}', '{$value[$i]['below']}', '{$value[$i]['criteria']}')";
 			$result = @mysql_query ( $insert_qry );
 			if ( !$result ) {
 				messagePush ( "Oops something went wrong");
@@ -180,6 +197,7 @@ if ( mysql_num_rows ( $result ) < 1 ) {
 		messagePush ( "Course Registration Number not specified" );
 		redirectPage ( 'feedback.php' );
 	}
+	$heading = "Feedback";
 	$link = 'feedback.php';
 	$htmlMsg .= "<h3>{$CNo} - {$CName} - {$crn}</h3>";
 	$qry = "SELECT * FROM clo WHERE CNo='{$CNo}';";
@@ -210,20 +228,16 @@ if ( mysql_num_rows ( $result ) < 1 ) {
 		$htmlMsg .= '</table>';
 		$htmlMsg .= '<br /><br />';
 		$htmlMsg .= '<table style="width: 100%" id="mytable" cellspacing="0" summary="Comments" align="center">';
-		$htmlMsg .= '<tr><th rowspan="2" width=10><center>Sl. No.</center></th><th rowspan = "2" width=100><center>CLO</center></th><th colspan="4"><center>Students</center></th><th rowspan="2"><center>Material Used</center></th></tr>';
+		$htmlMsg .= '<tr><th rowspan="2" width=10><center>Sl. No.</center></th><th rowspan = "2" width=100><center>CLO</center></th><th colspan="4"><center>Percentage Students</center></th><th rowspan="2"><center>Material Used</center></th></tr>';
 		$htmlMsg .= '<tr><th width="65"><center>Below Exp</center></th><th width="65"><center>Progress to Criteria</center></th><th width="65"><center>Meets Criteria</center></th><th width="65"><center>Exceeds Criteria</center></th></tr>';
 		while ( $row = mysql_fetch_assoc ( $result ) ) {
-			if ( $row['Metric'] == "P" )
-				$dispMetric = "%";
-			else
-				$dispMetric = "";
 			$htmlMsg .= '<tr>';
 			$htmlMsg .= '<td><center>'. $row['CLO_No'] .'</center></td>';
 			$htmlMsg .= '<td>'. $clo[$row['CLO_No']] .'</td>';
-			$htmlMsg .= '<td><center>'. $row['Below'] . $dispMetric .'</center></td>';
-			$htmlMsg .= '<td><center>'. $row['Progress'] . $dispMetric .'</center></td>';
-			$htmlMsg .= '<td><center>'. $row['Meet'] . $dispMetric .'</center></td>';
-			$htmlMsg .= '<td><center>'. $row['Exceed'] . $dispMetric .'</center></td>';
+			$htmlMsg .= '<td><center>'. $row['Below'] . '%</center></td>';
+			$htmlMsg .= '<td><center>'. $row['Progress'] .'%</center></td>';
+			$htmlMsg .= '<td><center>'. $row['Meet'] . '%</center></td>';
+			$htmlMsg .= '<td><center>'. $row['Exceed'] .'%</center></td>';
 			$htmlMsg .= '<td><center>'. $row['Criteria'] .'</center></td>';
 			$htmlMsg .= '</tr>';
 		}
@@ -232,17 +246,20 @@ if ( mysql_num_rows ( $result ) < 1 ) {
 		$htmlMsg .= '<tr><th>Comments</th></tr>';
 		$htmlMsg .= '<tr><td>'. $displayComment .'</td></tr>';
 		$htmlMsg .= '</table>';
-		$htmlMsg .= "
-			<br />
-			<div class=\"join\">
-			<a href=\"feedback.php\"><input value=\"Back\" type=\"submit\"></a>
-			</div>
-			";
+		$htmlMsg .= "<br /><div class=\"join\">";
+		if ( isDeptHead() )
+			$htmlMsg .= "<a href=\"home.php\"><input value=\"Back\" type=\"submit\"></a>";
+		else {
+			$htmlMsg .= "<a href=\"feedback.php\"><input value=\"Back\" type=\"submit\"></a>";
+			$htmlMsg .= "<a href=\"feedback.php?crn={$crn}&mode=delete\"><input value=\"Delete Feedback\" type=\"submit\"></a>";
+		}
+		$htmlMsg .= "</div>";
 	}
 
 } else if ( $mode == "add") {
 	$link = 'feedback.php?crn='.$crn.'&mode=add';
 	$htmlMsg .= "<h3>{$CNo} - {$CName} - {$crn}</h3>";
+	$htmlMsg .= "<p><i><b>Note:</b> This feedback can be submitted only once!</i></p>";
 	$htmlMsg .= "<form action=\"{$link}\" method=\"post\" name=\"form\">";
 	$htmlMsg .= "<input type=\"hidden\" name=\"crn\" value=\"{$crn}\" />";
 	$htmlMsg .= '<table style="width: 100%" id="mytable" cellspacing="0" summary="Comments" align="center">';
@@ -250,25 +267,13 @@ if ( mysql_num_rows ( $result ) < 1 ) {
 	$htmlMsg .= '<td style="border-top: 1px solid #C1DAD7;" width=180>Total Number of students:</td>';
 	$htmlMsg .= '<td style="padding-top: 15px; border-top: 1px solid #C1DAD7;" width="50"><input type="text" class="inputBox" style="width: 25px;" maxlength="3" value="'. $totalstud .'" name="totalstud" /></td>';
 	$htmlMsg .= '<td style="border-bottom: 0px; padding-left: 100px;"></td>';
-	$htmlMsg .= '<td style="border-top: 1px solid #C1DAD7;" width=80>Metric:</td>';
-	$htmlMsg .= '<td style="padding-top: 15px; border-top: 1px solid #C1DAD7;" width="50">';
-	$htmlMsg .= '<select name="metric">';
-	$htmlMsg .= '<option value="N"';
-	if ( $metric == "N" || $metric == "" )
-		$htmlMsg .= 'SELECTED';
-	$htmlMsg .= '>Total Students</option>';
-	$htmlMsg .= '<option value="P"';
-	if ( $metric == "P" )
-		$htmlMsg .= 'SELECTED';
-	$htmlMsg .= '>Percentage</option></select>';
-	$htmlMsg .= '</td>';
 	$htmlMsg .= '</tr>';
 	$htmlMsg .= '</table>';
 	$htmlMsg .= '<br /><br />';
 	$qry = "SELECT * FROM clo WHERE CNo='{$CNo}';";
 	$result = @mysql_query ( $qry ) or die ( mysql_error() );
 	$htmlMsg .= '<table style="width: 100%" id="mytable" cellspacing="0" summary="Comments" align="center">';
-	$htmlMsg .= '<tr><th rowspan="2" width=10><center>Sl. No.</center></th><th rowspan = "2" width=100><center>CLO</center></th><th colspan="4"><center>Number of Students / Percentage</center></th><th rowspan="2"><center>Material Used</center></th></tr>';
+	$htmlMsg .= '<tr><th rowspan="2" width=10><center>Sl. No.</center></th><th rowspan = "2" width=100><center>CLO</center></th><th colspan="4"><center>Number of Students</center></th><th rowspan="2"><center>Material Used</center></th></tr>';
 	$htmlMsg .= '<tr><th width="65"><center>Below Exp</center></th><th width="65"><center>Progress to Criteria</center></th><th width="65"><center>Meets Criteria</center></th><th width="65"><center>Exceeds Criteria</center></th></tr>';
 	while ( $row = mysql_fetch_assoc ( $result ) ) {
 		$htmlMsg .= '<tr>';
@@ -294,6 +299,31 @@ if ( mysql_num_rows ( $result ) < 1 ) {
 		</div>
 		";
 	$htmlMsg .= '</form>';
+} else if ( $mode == "delete" ) {
+	if ( isset ( $_POST['SureDelete'] ) ) {
+		$heading = "Deleting Feedback for Section {$crn}";
+		$qry = "DELETE FROM feedback WHERE CRN='{$crn}'";
+		$result = mysql_query ( $qry ) or die ( mysql_error() );
+		if ( $result ) {
+			messagePush ( "Deleted Feedback!" );
+			redirectPage ( "feedback.php" );
+		} else {
+			messagePush ( "Unable to delete!" );
+			redirectPage ( "feedback.php?crn={$crn}" );
+		}
+	} else {
+		$heading = "Confirm Deletion";
+		$htmlMsg = "Are you sure you want to delete feedback for {$crn}?<br>";
+		$htmlMsg .= "<form action=\"\" method=\"POST\" >";
+		$htmlMsg .= "
+			<br />
+			<div class=\"join\">
+			<input class=\"button\" type=\"submit\" value=\"Yes\" name=\"SureDelete\">
+			<a href=\"feedback.php?crn={$crn}\"><input value=\"No\" type=\"submit\"></a>
+			</div>
+			";
+		$htmlMsg .= '</form>';
+	}
 }
 
 $page[ 'below_msg' ] .= "
